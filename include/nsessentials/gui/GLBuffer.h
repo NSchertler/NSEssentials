@@ -21,7 +21,9 @@ namespace nse {
 		{
 			VertexBuffer,
 			IndexBuffer,
+#ifdef HAVE_SSBO
 			ShaderStorageBuffer
+#endif
 		};
 
 		//Represents a generic OpenGL buffer

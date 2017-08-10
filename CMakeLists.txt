@@ -21,6 +21,16 @@ if(NSE_WITH_NANOGUI)
 	SET(NSE_EXTRA_DEFS ${NSE_EXTRA_DEFS} /DHAVE_NANOGUI)
 endif()
 
+option(NSE_SSBO_SUPPORT "Specify to compile with support for shader storage buffers.")
+if(NSE_SSBO_SUPPORT)
+	SET(NSE_EXTRA_DEFS ${NSE_EXTRA_DEFS} /DHAVE_SSBO)
+endif()
+
+option(NSE_TESSELLATION_SUPPORT "Specify to compile with support for tessellation shaders.")
+if(NSE_TESSELLATION_SUPPORT)
+	SET(NSE_EXTRA_DEFS ${NSE_EXTRA_DEFS} /DHAVE_TESSELLATION)
+endif()
+
 add_definitions(${NSE_EXTRA_DEFS})
 SET(NSE_EXTRA_DEFS ${NSE_EXTRA_DEFS} PARENT_SCOPE)
 

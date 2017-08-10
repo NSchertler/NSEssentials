@@ -79,10 +79,12 @@ static GLuint createShader_helper(GLint type, const std::string &name,
 			std::cerr << "fragment shader";
 		else if (type == GL_GEOMETRY_SHADER)
 			std::cerr << "geometry shader";
+#ifdef HAVE_TESSELLATION
 		else if (type == GL_TESS_CONTROL_SHADER)
 			std::cerr << "tessellation control shader";
 		else if (type == GL_TESS_EVALUATION_SHADER)
 			std::cerr << "tessellation evaluation shader";
+#endif
 		std::cerr << " \"" << name << "\":" << std::endl;
 		std::cerr << shader_string << std::endl << std::endl;
 		glGetShaderInfoLog(id, 512, nullptr, buffer);
@@ -159,6 +161,7 @@ bool GLShader::init(const std::string &name,
 	return true;
 }
 
+#ifdef HAVE_TESSELLATION
 bool GLShader::initWithTessellation(const std::string &name,
 	const std::string &vertex_str,
 	const std::string &tessellation_control_str,
@@ -173,10 +176,12 @@ bool GLShader::initWithTessellation(const std::string &name,
 	mName = name;
 	mVertexShader =
 		createShader_helper(GL_VERTEX_SHADER, name, defines, vertex_str);
+#ifdef HAVE_TESSELLATION
 	mTessellationControlShader =
 		createShader_helper(GL_TESS_CONTROL_SHADER, name, defines, tessellation_control_str);
 	mTessellationEvalShader =
 		createShader_helper(GL_TESS_EVALUATION_SHADER, name, defines, tessellation_eval_str);
+#endif
 	mGeometryShader =
 		createShader_helper(GL_GEOMETRY_SHADER, name, defines, geometry_str);
 	mFragmentShader =
@@ -213,6 +218,7 @@ bool GLShader::initWithTessellation(const std::string &name,
 
 	return true;
 }
+#endif
 
 void GLShader::bind()
 {

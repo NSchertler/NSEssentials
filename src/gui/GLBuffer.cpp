@@ -16,7 +16,14 @@
 
 using namespace nse::gui;
 
-const GLuint BufferTargets[] = { GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER, GL_SHADER_STORAGE_BUFFER };
+const GLuint BufferTargets[] = 
+{
+	GL_ARRAY_BUFFER, 
+	GL_ELEMENT_ARRAY_BUFFER
+#ifdef HAVE_SSBO
+	, GL_SHADER_STORAGE_BUFFER 
+#endif
+};
 
 GLBuffer::GLBuffer(GLBufferType type)
 	: id(0), type(type)
