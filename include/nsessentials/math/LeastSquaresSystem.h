@@ -11,6 +11,7 @@
 
 #ifdef HAVE_EIGEN
 #include <Eigen/Sparse>
+#include "nsessentials/data/Parallelization.h"
 
 namespace nse {
 	namespace math
