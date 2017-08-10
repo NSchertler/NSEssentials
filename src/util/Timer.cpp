@@ -14,7 +14,7 @@
 
 using namespace nse::util;
 
-namespace osr
+namespace nse
 {
 	namespace util
 	{
