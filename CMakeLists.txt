@@ -35,6 +35,7 @@ add_definitions(${NSE_EXTRA_DEFS})
 SET(NSE_EXTRA_DEFS ${NSE_EXTRA_DEFS} PARENT_SCOPE)
 
 add_library(nsessentials STATIC			
+			src/data/FileHelper.cpp
 			src/data/Parallelization.cpp
 			
 			src/gui/AbstractViewer.cpp			
