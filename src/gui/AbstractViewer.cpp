@@ -13,9 +13,9 @@
 
 using namespace nse::gui;
 
-AbstractViewer::AbstractViewer(const std::string& title, int width, int height)
-	: nanogui::Screen(Eigen::Vector2i(width, height), title, true, false, 8, 8, 24, 8, 8),
-	_camera(*this), _ctrlDown(false), _shiftDown(false)
+AbstractViewer::AbstractViewer(const std::string& title, int width, int height, int nSamples)
+	: nanogui::Screen(Eigen::Vector2i(width, height), title, true, false, 8, 8, 24, 8, nSamples),
+	_camera(*this), _ctrlDown(false), _shiftDown(false), nSamples(nSamples)
 {
 	
 }
