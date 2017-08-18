@@ -36,7 +36,8 @@ GLShader::~GLShader()
 
 static GLuint createShader_helper(GLint type, const std::string &name,
 	const std::string &defines,
-	std::string shader_string)
+	std::string shader_string,
+	bool failSilently)
 {
 	if (shader_string.empty())
 		return (GLuint)0;
@@ -71,6 +72,9 @@ static GLuint createShader_helper(GLint type, const std::string &name,
 
 	if (status != GL_TRUE) 
 	{
+		if (failSilently)
+			return 0;
+
 		char buffer[512];
 		std::cerr << "Error while compiling ";
 		if (type == GL_VERTEX_SHADER)
@@ -118,7 +122,8 @@ bool GLShader::initFromFiles (const std::string &name,
 bool GLShader::init(const std::string &name,
 	const std::string &vertex_str,
 	const std::string &fragment_str,
-	const std::string &geometry_str)
+	const std::string &geometry_str,
+	bool failSilently)
 {
 	std::string defines;
 	for (auto def : mDefinitions)
@@ -126,12 +131,13 @@ bool GLShader::init(const std::string &name,
 
 	mName = name;
 	mVertexShader =
-		createShader_helper(GL_VERTEX_SHADER, name, defines, vertex_str);
+		createShader_helper(GL_VERTEX_SHADER, name, defines, vertex_str, failSilently);
 	mGeometryShader =
-		createShader_helper(GL_GEOMETRY_SHADER, name, defines, geometry_str);
+		createShader_helper(GL_GEOMETRY_SHADER, name, defines, geometry_str, failSilently);
 	mFragmentShader =
-		createShader_helper(GL_FRAGMENT_SHADER, name, defines, fragment_str);
+		createShader_helper(GL_FRAGMENT_SHADER, name, defines, fragment_str, failSilently);
 
+	//only relevant for failSilently
 	if (!mVertexShader || !mFragmentShader)
 		return false;
 	if (!geometry_str.empty() && !mGeometryShader)
@@ -150,7 +156,10 @@ bool GLShader::init(const std::string &name,
 	GLint status;
 	glGetProgramiv(mProgramShader, GL_LINK_STATUS, &status);
 
-	if (status != GL_TRUE) {
+	if (status != GL_TRUE)
+	{
+		if (failSilently)
+			return false;
 		char buffer[512];
 		glGetProgramInfoLog(mProgramShader, 512, nullptr, buffer);
 		std::cerr << "Linker error (" << mName << "): " << std::endl << buffer << std::endl;
@@ -167,7 +176,8 @@ bool GLShader::initWithTessellation(const std::string &name,
 	const std::string &tessellation_control_str,
 	const std::string &tessellation_eval_str,
 	const std::string &fragment_str,
-	const std::string &geometry_str)
+	const std::string &geometry_str,
+	bool failSilently)
 {
 	std::string defines;
 	for (auto def : mDefinitions)
@@ -175,18 +185,19 @@ bool GLShader::initWithTessellation(const std::string &name,
 
 	mName = name;
 	mVertexShader =
-		createShader_helper(GL_VERTEX_SHADER, name, defines, vertex_str);
+		createShader_helper(GL_VERTEX_SHADER, name, defines, vertex_str, failSilently);
 #ifdef HAVE_TESSELLATION
 	mTessellationControlShader =
-		createShader_helper(GL_TESS_CONTROL_SHADER, name, defines, tessellation_control_str);
+		createShader_helper(GL_TESS_CONTROL_SHADER, name, defines, tessellation_control_str, failSilently);
 	mTessellationEvalShader =
-		createShader_helper(GL_TESS_EVALUATION_SHADER, name, defines, tessellation_eval_str);
+		createShader_helper(GL_TESS_EVALUATION_SHADER, name, defines, tessellation_eval_str, failSilently);
 #endif
 	mGeometryShader =
-		createShader_helper(GL_GEOMETRY_SHADER, name, defines, geometry_str);
+		createShader_helper(GL_GEOMETRY_SHADER, name, defines, geometry_str, failSilently);
 	mFragmentShader =
-		createShader_helper(GL_FRAGMENT_SHADER, name, defines, fragment_str);
+		createShader_helper(GL_FRAGMENT_SHADER, name, defines, fragment_str, failSilently);
 
+	//only relevant for failSilently
 	if (!mVertexShader || !mFragmentShader || !mTessellationControlShader || !mTessellationEvalShader)
 		return false;
 	if (!geometry_str.empty() && !mGeometryShader)
@@ -209,6 +220,8 @@ bool GLShader::initWithTessellation(const std::string &name,
 
 	if (status != GL_TRUE) 
 	{
+		if (failSilently)
+			return false;
 		char buffer[512];
 		glGetProgramInfoLog(mProgramShader, 512, nullptr, buffer);
 		std::cerr << "Linker error (" << mName << "): " << std::endl << buffer << std::endl;

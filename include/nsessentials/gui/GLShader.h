@@ -33,14 +33,16 @@ namespace nse {
 			/// Initialize the shader using the specified source strings
 			bool init(const std::string &name, const std::string &vertex_str,
 				const std::string &fragment_str,
-				const std::string &geometry_str = "");
+				const std::string &geometry_str = "",
+				bool failSilently = false);
 
 #ifdef HAVE_TESSELLATION
 			bool initWithTessellation(const std::string &name, const std::string &vertex_str,
 				const std::string &tessellation_control_str,
 				const std::string &tessellation_eval_str,
 				const std::string &fragment_str,
-				const std::string &geometry_str = "");
+				const std::string &geometry_str = "",
+				bool failSilently = false);
 #endif
 
 			/// Initialize the shader using the specified files on disk
