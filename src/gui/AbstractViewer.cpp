@@ -92,10 +92,10 @@ float AbstractViewer::get3DPosition(const Eigen::Vector2i & screenPos, Eigen::Ve
 	float x = 2 * ((float)screenPos.x() / width() - 0.5f);
 	float y = 2 * ((float)-screenPos.y() / height() + 0.5f);
 
-	Eigen::Matrix4f model, view, proj;
-	camera().ComputeCameraMatrices(model, view, proj);
+	Eigen::Matrix4f view, proj;
+	camera().ComputeCameraMatrices(view, proj);
 
-	Eigen::Matrix4f mvp = proj * view * model;
+	Eigen::Matrix4f mvp = proj * view;
 	Eigen::Matrix4f invMvp = mvp.inverse();
 
 	pos = invMvp * Eigen::Vector4f(x, y, ndcDepth, 1);

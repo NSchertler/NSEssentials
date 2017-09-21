@@ -49,4 +49,5 @@ add_library(nsessentials STATIC
 			src/math/Morton.cpp
 
 			src/util/IndentationLog.cpp
-			src/util/Timer.cpp)
+			src/util/Timer.cpp
+			src/util/GLDebug.cpp)

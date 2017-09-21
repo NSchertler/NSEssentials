@@ -20,30 +20,39 @@ Camera::Camera(const nanogui::Widget & parent)
 	params.arcball.setSize(parent.size());
 }
 
-void Camera::ComputeCameraMatrices(Eigen::Matrix4f & model, Eigen::Matrix4f & view, Eigen::Matrix4f & proj, float customAspectRatio) const
+void Camera::ComputeCameraMatrices(Eigen::Matrix4f & view, Eigen::Matrix4f & proj, float customAspectRatio) const
 {
-	view = nanogui::lookAt(params.eye, params.center, params.up);
+	auto arcBallMatrix = params.arcball.matrix();
+	Eigen::Vector3f viewDirection = -arcBallMatrix.row(2).head<3>();
+	Eigen::Vector3f cameraPosition = params.focusPoint - viewDirection * params.viewDistance;
 
-	float fH = std::tan(params.fovy / 360.0f * (float)M_PI) * params.dnear;
+	float depthOfSceneCenter = (params.sceneCenter - cameraPosition).dot(viewDirection);
+	float minZNear = 0.001f * params.sceneRadius;
+	float znear = std::max(minZNear, depthOfSceneCenter - params.sceneRadius);
+	float zfar = std::max(znear + minZNear, depthOfSceneCenter + params.sceneRadius);
+
+	float fH = std::tan(params.fovy / 360.0f * (float)M_PI) * znear;
 	float aspectRatio = customAspectRatio == 0 ? (float)parent.width() / parent.height() : customAspectRatio;
 	float fW = fH * aspectRatio;
 
-	proj = nanogui::frustum(-fW, fW, -fH, fH, params.dnear, params.dfar);
-	model = params.arcball.matrix();
+	proj = nanogui::frustum(-fW, fW, -fH, fH, znear, zfar);
 
-	model *= nanogui::scale(Eigen::Vector3f::Constant(params._zoom * params.modelZoom));
-	model *= nanogui::translate(params.modelTranslation);
+	view = nanogui::translate(Eigen::Vector3f(0, 0, -params.viewDistance)) * params.arcball.matrix() * nanogui::translate(-params.focusPoint);
 }
 
 void Camera::Zoom(float amount)
 {
-	params._zoom = std::max(0.1f, params._zoom * (1 + 0.1f * amount));
+	params.viewDistance = std::max(0.001f * params.sceneRadius, params.viewDistance * (1 - 0.1f * amount));
 }
 
 void Camera::FocusOnBBox(const nse::math::BoundingBox<float, 3>& bbox)
 {
-	params.modelZoom = 5.0f / bbox.diagonal().norm();
-	params.modelTranslation = -bbox.center();
+	params.sceneCenter = 0.5f * (bbox.min + bbox.max);
+	params.focusPoint = params.sceneCenter;
+	params.sceneRadius = bbox.diagonal().norm() / 2.0f;
+
+	float fov = params.fovy * std::min(1.0f, (float)parent.width() / parent.height());
+	params.viewDistance = params.sceneRadius / sinf(fov / 2.0f * (float)M_PI / 180);	
 }
 
 bool Camera::HandleMouseButton(const Eigen::Vector2i & p, int button, bool down, int modifiers)
@@ -76,7 +85,7 @@ bool Camera::HandleMouseButton(const Eigen::Vector2i & p, int button, bool down,
 		{
 			if (interactionMode == None)
 			{
-				modelTranslation_start = params.modelTranslation;
+				modelTranslation_start = params.focusPoint;
 				translation_start = p;
 				interactionMode = Translate;
 				return true;
@@ -104,14 +113,13 @@ bool Camera::HandleMouseMove(const Eigen::Vector2i & p, const Eigen::Vector2i & 
 	}
 	else if (interactionMode == Translate)
 	{
-		Eigen::Matrix4f model, view, proj;
-		ComputeCameraMatrices(model, view, proj);
+		Eigen::Matrix4f view, proj;
+		ComputeCameraMatrices(view, proj);
 
 		Eigen::Vector2f current(2.0f * p.x() / parent.height() - 1.0f, -2.0f * p.y() / parent.height() + 1.0f);
 		Eigen::Vector2f start(2.0f * translation_start.x() / parent.height() - 1.0f, -2.0f * translation_start.y() / parent.height() + 1.0f);
-		auto rel = current - start;
-		auto mv = view * model;
-		params.modelTranslation = modelTranslation_start + 2 * (rel.x() * mv.block<1, 3>(0, 0).transpose() + rel.y() *  mv.block<1, 3>(1, 0).transpose()) / (params._zoom * params._zoom * params.modelZoom * params.modelZoom);
+		auto rel = (current - start) * params.viewDistance * tanf(params.fovy / 2 * (float)M_PI / 180);
+		params.focusPoint = modelTranslation_start - (rel.x() * view.block<1, 3>(0, 0).transpose() + rel.y() *  view.block<1, 3>(1, 0).transpose());
 
 		return true;		
 	}

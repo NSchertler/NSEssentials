@@ -28,10 +28,8 @@ namespace nse {
 			//Initialize the camera. parent is the widget onto which the scene is rendered and is only used to query its size.
 			Camera(const nanogui::Widget& parent);
 
-			//Computes model, view, and projection matrix for the current camera state. The model matrix contains the rotation,
-			//scaling, and translation of the camera and is thus the actual view matrix.
+			//Computes view and projection matrix for the current camera state.
 			void ComputeCameraMatrices(
-				Eigen::Matrix4f &model,
 				Eigen::Matrix4f &view,
 				Eigen::Matrix4f &proj,
 				float customAspectRatio = 0) const;
@@ -54,14 +52,13 @@ namespace nse {
 			{
 				nanogui::Arcball arcball;
 
-				float _zoom = 1.0f, fovy = 45.0f;
-				float dnear = 0.05f, dfar = 100.0f;
-				Eigen::Vector3f eye = Eigen::Vector3f(0.0f, 0.0f, 5.0f);
-				Eigen::Vector3f center = Eigen::Vector3f(0.0f, 0.0f, 0.0f);
-				Eigen::Vector3f up = Eigen::Vector3f(0.0f, 1.0f, 5.0f);
+				//bounding sphere of scene
+				Eigen::Vector3f sceneCenter;
+				float sceneRadius;
 
-				Eigen::Vector3f modelTranslation = Eigen::Vector3f::Zero();
-				float modelZoom = 1.0f;
+				float fovy = 45.0f;
+				Eigen::Vector3f focusPoint = Eigen::Vector3f::Zero();
+				float viewDistance = 5;
 			};
 
 			//Returns the current camera parameters
