@@ -57,10 +57,10 @@ namespace nse {
 				}
 			}
 
-			template <typename RHSType, typename SolutionType>
+			template <typename RHSType, typename SolutionType, typename Scalar = RHSType::Scalar>
 			void solveWithGuess(const RHSType& rhs, const SolutionType& guess, SolutionType& solution)
 			{
-				Eigen::Matrix<typename RHSType::Scalar, -1, 1>
+				Eigen::Matrix<Scalar, -1, 1>
 					r(rhs.rows()),
 					d(rhs.rows()),
 					q(rhs.rows()),
@@ -81,7 +81,7 @@ namespace nse {
 
 					parallelMatrixMultiplyVector(*m, solution, col, r);
 
-					double rhsNormSq = 0;
+					Scalar rhsNormSq = 0;
 #pragma omp parallel for reduction( + : rhsNormSq)
 					for (int i = 0; i < rhs.rows(); i++)
 					{
@@ -89,9 +89,9 @@ namespace nse {
 						d(i) = invDiag(i) * r(i);
 						rhsNormSq += rhs.coeff(i, col - solveColLowerInclusive) * rhs.coeff(i, col - solveColLowerInclusive);
 					}
-					double threshold = toleranceSq * rhsNormSq;
+					Scalar threshold = toleranceSq * rhsNormSq;
 
-					double delta_new = 0;
+					Scalar delta_new = 0;
 #pragma omp parallel for reduction( + : delta_new )
 					for (int i = 0; i < rhs.rows(); i++)
 						delta_new += r(i) * d(i);
@@ -106,16 +106,16 @@ namespace nse {
 					{
 						parallelMatrixMultiplyVector(*m, d, 0, q);
 
-						double dDotQ = 0;
+						Scalar dDotQ = 0;
 #pragma omp parallel for reduction( + : dDotQ )
 						for (int i = 0; i < rhs.rows(); i++)
 							dDotQ += d(i) * q(i);
 
-						float alpha = (float)(delta_new / dDotQ);
+						Scalar alpha = delta_new / dDotQ;
 
 #pragma omp parallel for
 						for (int i = 0; i < rhs.rows(); i++)
-							solution.coeffRef(i, col) += d(i) * alpha;
+							solution.coeffRef(i, col) = (SolutionType::Scalar)(solution.coeff(i, col) + d(i) * alpha);
 
 						const int RESET_COUNT = 50;
 						if ((it % RESET_COUNT) == (RESET_COUNT - 1))
@@ -134,21 +134,21 @@ namespace nse {
 #pragma omp parallel for
 							for (int i = 0; i < rhs.rows(); i++)
 							{
-								r(i) -= q(i) * alpha;
+								r(i) = (RHSType::Scalar)(r(i) - q(i) * alpha);
 								s(i) = invDiag(i) * r(i);
 							}
 						}
 
-						double delta_old = delta_new;
+						Scalar delta_old = delta_new;
 						delta_new = 0;
 #pragma omp parallel for reduction( + : delta_new )
 						for (int i = 0; i < rhs.rows(); i++)
 							delta_new += r(i) * s(i);
 
-						float beta = (float)(delta_new / delta_old);
+						Scalar beta = delta_new / delta_old;
 #pragma omp parallel for
 						for (int i = 0; i < rhs.rows(); i++)
-							d(i) = s(i) + d(i) * beta;
+							d(i) = (RHSType::Scalar)(s(i) + d(i) * beta);
 					}
 					_iterations += it;
 				} //for every column
@@ -157,8 +157,8 @@ namespace nse {
 
 		private:
 
-			template <typename RHSType>
-			void parallelMatrixMultiplyVector(const Matrix& m, const RHSType& x, int col, Eigen::Matrix<typename RHSType::Scalar, -1, 1>& out) const
+			template <typename RHSType, typename SolutionType>
+			void parallelMatrixMultiplyVector(const Matrix& m, const RHSType& x, int col, SolutionType& out) const
 			{
 #pragma omp parallel for
 				for (int row = 0; row < m.rows(); row++)
@@ -166,7 +166,7 @@ namespace nse {
 					double accum = 0;
 					for (typename Matrix::InnerIterator it(m, row); it; ++it)
 						accum += it.value() * x.coeff(it.index(), col);
-					out(row) = (typename RHSType::Scalar)accum;
+					out(row) = (typename SolutionType::Scalar)accum;
 				}
 			}
 

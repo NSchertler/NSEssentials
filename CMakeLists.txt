@@ -14,7 +14,6 @@ add_library(nsessentials STATIC
 			src/gui/GLVertexArray.cpp
 
 			src/math/BoundingBox.cpp
-			src/math/LeastSquaresSystem.cpp
 			src/math/Morton.cpp
 
 			src/util/IndentationLog.cpp

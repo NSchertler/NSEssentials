@@ -60,6 +60,20 @@ namespace nse {
 			return newVal.f;
 		}
 
+		inline double atomicAdd(volatile double *dst, double delta)
+		{
+			union bits { double f; uint32_t i[2]; };
+			bits oldVal, newVal;
+			do {
+#if defined(__i386__) || defined(__amd64__)
+				__asm__ __volatile__("pause\n");
+#endif
+				oldVal.f = *dst;
+				newVal.f = oldVal.f + delta;
+			} while (!atomicCompareAndExchange((volatile uint32_t *)dst, newVal.i[0], oldVal.i[0]) || !atomicCompareAndExchange((volatile uint32_t *)dst, newVal.i[1], oldVal.i[1]));
+			return newVal.f;
+		}
+
 		class ordered_lock
 		{
 		public:

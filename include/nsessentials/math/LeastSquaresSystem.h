@@ -15,11 +15,11 @@
 namespace nse {
 	namespace math
 	{
-		template <int SolutionColumns>
+		template <int SolutionColumns, typename Scalar = float>
 		class LeastSquaresSystem;
 
 		// Represents a row in the linear system A x = b
-		template <int SolutionColumns>
+		template <int SolutionColumns, typename Scalar = float>
 		class LinearSystemRow
 		{
 		public:
@@ -27,29 +27,33 @@ namespace nse {
 			void reset();
 
 			//Adds the summand coefficient * x_index to the left-hand side of the equation.
-			void addCoefficient(int index, float coefficient);
+			void addCoefficient(int index, Scalar coefficient);
 
 			//Adds the summand coefficient * fixed to the left-hand side of the equation.
-			void addCoefficientWithFixed(float coefficient, const Eigen::Matrix<float, SolutionColumns, 1>& fixed);
+			void addCoefficientWithFixed(Scalar coefficient, const Eigen::Matrix<Scalar, SolutionColumns, 1>& fixed);
 
 			//Adds value to the right-hand side of the equation.
-			void addToRHS(const Eigen::Matrix<float, SolutionColumns, 1>& value);
+			void addToRHS(const Eigen::Matrix<Scalar, SolutionColumns, 1>& value);
+
+			template <typename ReturnType = typename std::enable_if<SolutionColumns == 1, void>::type>
+			ReturnType addToRHS(Scalar value);
+
 
 		private:
-			std::vector<std::pair<int, float>> lhsCoefficients;
-			Eigen::Matrix<float, SolutionColumns, 1> rhs;
+			std::vector<std::pair<int, Scalar>> lhsCoefficients;
+			Eigen::Matrix<Scalar, SolutionColumns, 1> rhs;
 
-			template <int N>
+			template <int N, typename TScalar>
 			friend class LeastSquaresSystem;
 		};
 
 		// Represents a sparse linear least squares system as normal equations A^T A x = A^T b.
 		// SolutionColumns is the number of columns of x and b.
-		template <int SolutionColumns>
+		template <int SolutionColumns, typename Scalar>
 		class LeastSquaresSystem
 		{
 		public:
-			typedef Eigen::SparseMatrix<float> MatrixType;
+			typedef Eigen::SparseMatrix<Scalar> MatrixType;
 
 			LeastSquaresSystem();
 			LeastSquaresSystem(int numberOfUnknowns);
@@ -57,7 +61,7 @@ namespace nse {
 			// Updates the system in a way that is equivalent to adding another row in A and b in A x = b.
 			// The first SkipColumns columns of the row's right-hand side are ignored.
 			template <int SkipColumns, int Columns>
-			void addRow(const LinearSystemRow<Columns>& row, float weight = 1)
+			void addRow(const LinearSystemRow<Columns, Scalar>& row, Scalar weight = 1)
 			{
 				for (auto& entry1 : row.lhsCoefficients)
 				{
@@ -71,12 +75,12 @@ namespace nse {
 
 			// Updates the system in a way that is equivalent to adding another row in A and b in A x = b.
 			// row is a list of index/value pairs. solution is the right-hand side of the equation.
-			void addRow(const LinearSystemRow<SolutionColumns>& row, float weight = 1);
+			void addRow(const LinearSystemRow<SolutionColumns, Scalar>& row, Scalar weight = 1);
 
 			// Has the same semantics as addRow but performs all operations atomically. This requires
 			// that all entries in the matrix are already present.
 			template <int SkipColumns, int Columns>
-			void addRowAtomic(const LinearSystemRow<Columns>& row, float weight = 1)
+			void addRowAtomic(const LinearSystemRow<Columns, Scalar>& row, Scalar weight = 1)
 			{
 				for (auto& entry1 : row.lhsCoefficients)
 				{
@@ -86,7 +90,7 @@ namespace nse {
 					{
 						if (entry2.second == 0)
 							continue;
-						float* coeff = &lhs.coeffRef(entry1.first, entry2.first);
+						Scalar* coeff = &lhs.coeffRef(entry1.first, entry2.first);
 						nse::data::atomicAdd(coeff, weight * entry1.second * entry2.second);
 					}
 					rhs.row(entry1.first) += weight * entry1.second * row.rhs.template block<SolutionColumns, 1>(SkipColumns, 0).transpose();
@@ -95,21 +99,21 @@ namespace nse {
 
 			// Has the same semantics as addRow but performs all operations atomically. This requires
 			// that all entries in the matrix are already present.
-			void addRowAtomic(const LinearSystemRow<SolutionColumns>& row, float weight = 1);
+			void addRowAtomic(const LinearSystemRow<SolutionColumns, Scalar>& row, Scalar weight = 1);
 
 			template <typename EigenSolver>
-			Eigen::Matrix<float, Eigen::Dynamic, SolutionColumns> solve(EigenSolver& solver, const Eigen::Matrix<float, Eigen::Dynamic, SolutionColumns>& initialGuess)
+			Eigen::Matrix<Scalar, Eigen::Dynamic, SolutionColumns> solve(EigenSolver& solver, const Eigen::Matrix<Scalar, Eigen::Dynamic, SolutionColumns>& initialGuess)
 			{
 				solver.compute(lhs);
 
-				Eigen::Matrix<float, Eigen::Dynamic, SolutionColumns> solution(initialGuess.rows(), SolutionColumns);
+				Eigen::Matrix<Scalar, Eigen::Dynamic, SolutionColumns> solution(initialGuess.rows(), SolutionColumns);
 				solver.solveWithGuess(rhs, initialGuess, solution);
 				return solution;
 			}
 
 			// This overload can be used when you want to solve only a subset of available columns of the solution.
 			template <int TotalColumnsOfGuessAndSolution, typename EigenSolver>
-			void solve(EigenSolver& solver, const Eigen::Matrix<float, Eigen::Dynamic, TotalColumnsOfGuessAndSolution>& initialGuess, Eigen::Matrix<float, Eigen::Dynamic, TotalColumnsOfGuessAndSolution>& solution)
+			void solve(EigenSolver& solver, const Eigen::Matrix<Scalar, Eigen::Dynamic, TotalColumnsOfGuessAndSolution>& initialGuess, Eigen::Matrix<Scalar, Eigen::Dynamic, TotalColumnsOfGuessAndSolution>& solution)
 			{
 				solver.compute(lhs);
 
@@ -120,8 +124,10 @@ namespace nse {
 
 		public:
 			MatrixType lhs;
-			Eigen::Matrix<float, -1, SolutionColumns> rhs;
+			Eigen::Matrix<Scalar, -1, SolutionColumns> rhs;
 		};
 	}
 }
+
+#include <nsessentials/math/LeastSquaresSystem.inl>
 #endif
