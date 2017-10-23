@@ -68,8 +68,6 @@ template <int SolutionColumns, typename Scalar>
 template <typename ReturnType>
 ReturnType LinearSystemRow<SolutionColumns, Scalar>::addToRHS(Scalar value)
 {
-	Eigen::Matrix<Scalar, SolutionColumns, 1> temp;
-	temp << value;
-	rhs += temp;
+	rhs(0) += temp;
 }
 #endif
