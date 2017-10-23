@@ -25,19 +25,35 @@ namespace nse {
 		{
 		public:
 			//Resets the row to zero
-			void reset();
+			void reset()
+			{
+				lhsCoefficients.clear();
+				rhs.setZero();
+			}
 
 			//Adds the summand coefficient * x_index to the left-hand side of the equation.
-			void addCoefficient(int index, Scalar coefficient);
+			void addCoefficient(int index, Scalar coefficient)
+			{
+				lhsCoefficients.push_back(std::make_pair(index, coefficient));
+			}
 
 			//Adds the summand coefficient * fixed to the left-hand side of the equation.
-			void addCoefficientWithFixed(Scalar coefficient, const Eigen::Matrix<Scalar, SolutionColumns, 1>& fixed);
+			void addCoefficientWithFixed(Scalar coefficient, const Eigen::Matrix<Scalar, SolutionColumns, 1>& fixed)
+			{
+				rhs -= coefficient * fixed;
+			}
 
 			//Adds value to the right-hand side of the equation.
-			void addToRHS(const Eigen::Matrix<Scalar, SolutionColumns, 1>& value);
+			void addToRHS(const Eigen::Matrix<Scalar, SolutionColumns, 1>& value)
+			{
+				rhs += value;
+			}
 
 			template <typename ReturnType = typename std::enable_if<SolutionColumns == 1, void>::type>
-			ReturnType addToRHS(Scalar value);
+			ReturnType addToRHS(Scalar value)
+			{
+				rhs(0) += value;
+			}
 
 
 		private:
@@ -56,8 +72,12 @@ namespace nse {
 		public:
 			typedef Eigen::SparseMatrix<Scalar> MatrixType;
 
-			LeastSquaresSystem();
-			LeastSquaresSystem(int numberOfUnknowns);
+			LeastSquaresSystem() { }
+			LeastSquaresSystem(int numberOfUnknowns)
+				: lhs(numberOfUnknowns, numberOfUnknowns), rhs(Eigen::Matrix<Scalar, -1, SolutionColumns>::Zero(numberOfUnknowns, SolutionColumns))
+			{
+				rhs.setZero();
+			}
 
 			// Updates the system in a way that is equivalent to adding another row in A and b in A x = b.
 			// The first SkipColumns columns of the row's right-hand side are ignored.
@@ -76,7 +96,10 @@ namespace nse {
 
 			// Updates the system in a way that is equivalent to adding another row in A and b in A x = b.
 			// row is a list of index/value pairs. solution is the right-hand side of the equation.
-			void addRow(const LinearSystemRow<SolutionColumns, Scalar>& row, Scalar weight = 1);
+			void addRow(const LinearSystemRow<SolutionColumns, Scalar>& row, Scalar weight = 1)
+			{
+				addRow<0>(row, weight);
+			}
 
 			// Has the same semantics as addRow but performs all operations atomically. This requires
 			// that all entries in the matrix are already present.
@@ -100,7 +123,10 @@ namespace nse {
 
 			// Has the same semantics as addRow but performs all operations atomically. This requires
 			// that all entries in the matrix are already present.
-			void addRowAtomic(const LinearSystemRow<SolutionColumns, Scalar>& row, Scalar weight = 1);
+			void addRowAtomic(const LinearSystemRow<SolutionColumns, Scalar>& row, Scalar weight = 1)
+			{
+				addRowAtomic<0>(row, weight);
+			}
 
 			template <typename EigenSolver>
 			Eigen::Matrix<Scalar, Eigen::Dynamic, SolutionColumns> solve(EigenSolver& solver, const Eigen::Matrix<Scalar, Eigen::Dynamic, SolutionColumns>& initialGuess)
