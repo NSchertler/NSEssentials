@@ -155,6 +155,4 @@ namespace nse {
 		};
 	}
 }
-
-#include <nsessentials/math/LeastSquaresSystem.inl>
 #endif
