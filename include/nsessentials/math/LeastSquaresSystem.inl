@@ -68,6 +68,6 @@ template <int SolutionColumns, typename Scalar>
 template <typename ReturnType>
 ReturnType LinearSystemRow<SolutionColumns, Scalar>::addToRHS(Scalar value)
 {
-	rhs(0) += temp;
+	rhs(0) += value;
 }
 #endif
