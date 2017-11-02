@@ -50,4 +50,5 @@ add_library(nsessentials STATIC
 
 			src/util/IndentationLog.cpp
 			src/util/Timer.cpp
-			src/util/GLDebug.cpp)
+			src/util/GLDebug.cpp
+			src/util/UnionFind.cpp)
