@@ -41,6 +41,9 @@ namespace nse {
 			//The parameters are only estimated; it is not guaranteed that the bounding box actually fits in the viewport.
 			void FocusOnBBox(const nse::math::BoundingBox<float, 3>& bbox);
 
+			//Keeps the camera's rotation and viewing distance and sets the focus point to the provided location.
+			void FocusOnPoint(const Eigen::Vector3f& point);
+
 			//Forwarded mouse button event.
 			bool HandleMouseButton(const Eigen::Vector2i &p, int button, bool down, int modifiers);
 			//Forwarded mouse move event.

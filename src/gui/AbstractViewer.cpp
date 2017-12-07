@@ -60,6 +60,27 @@ bool AbstractViewer::mouseButtonEvent(const Eigen::Vector2i &p, int button, bool
 	if (mouseButtonHook(p, button, down, modifiers) && down)
 		return true;
 
+	auto now = std::chrono::high_resolution_clock::now();
+	if (std::chrono::duration_cast<std::chrono::milliseconds>(now - lastClickTime).count() < 300 && !down && button == lastClickButton)
+	{
+		if (button == GLFW_MOUSE_BUTTON_LEFT)
+		{
+			Eigen::Vector3f point;
+			auto depth = get3DPosition(p, point);
+			if (depth < 1)
+			{
+				_camera.FocusOnPoint(point);
+				glfwSetCursorPos(mGLFWWindow, width() / 2, height() / 2);
+			}
+		}
+	}
+
+	if (!down)
+	{
+		lastClickTime = now;
+		lastClickButton = button;
+	}
+
 	return _camera.HandleMouseButton(p, button, down, modifiers);	
 }
 

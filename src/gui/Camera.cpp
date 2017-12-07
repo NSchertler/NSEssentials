@@ -55,6 +55,11 @@ void Camera::FocusOnBBox(const nse::math::BoundingBox<float, 3>& bbox)
 	params.viewDistance = params.sceneRadius / sinf(fov / 2.0f * (float)M_PI / 180);	
 }
 
+void Camera::FocusOnPoint(const Eigen::Vector3f& point)
+{
+	params.focusPoint = point;
+}
+
 bool Camera::HandleMouseButton(const Eigen::Vector2i & p, int button, bool down, int modifiers)
 {
 	if (button == GLFW_MOUSE_BUTTON_1 && modifiers == 0)
