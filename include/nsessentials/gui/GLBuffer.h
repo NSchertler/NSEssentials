@@ -53,6 +53,19 @@ namespace nse {
 				return *this;
 			}
 
+			template <typename Scalar, int Rows>
+			GLBuffer& uploadData(const std::vector<Eigen::Matrix<Scalar, Rows, 1>>& data)
+			{
+				uint32_t compSize = sizeof(typename Scalar);
+				GLuint glType = (GLuint)nanogui::detail::type_traits<Scalar>::type;
+				bool integral = (bool)nanogui::detail::type_traits<Scalar>::integral;
+
+				uploadData((uint32_t)data.size() * compSize, Rows, compSize,
+					glType, integral, (const uint8_t *)data.data());
+
+				return *this;
+			}
+
 			/// Download the data from the vertex buffer object into an Eigen matrix
 			template <typename Matrix>
 			void downloadData(Matrix &M)
