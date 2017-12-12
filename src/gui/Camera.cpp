@@ -42,7 +42,7 @@ void Camera::ComputeCameraMatrices(Eigen::Matrix4f & view, Eigen::Matrix4f & pro
 
 void Camera::Zoom(float amount)
 {
-	params.viewDistance = std::max(0.001f * params.sceneRadius, params.viewDistance * (1 - 0.1f * amount));
+	params.viewDistance = std::max(0.001f * params.sceneRadius, params.viewDistance * std::pow(0.90f, amount));
 }
 
 void Camera::FocusOnBBox(const nse::math::BoundingBox<float, 3>& bbox)
