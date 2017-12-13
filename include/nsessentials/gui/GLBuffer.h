@@ -60,7 +60,7 @@ namespace nse {
 				GLuint glType = (GLuint)nanogui::detail::type_traits<Scalar>::type;
 				bool integral = (bool)nanogui::detail::type_traits<Scalar>::integral;
 
-				uploadData((uint32_t)data.size() * compSize, Rows, compSize,
+				uploadData((uint32_t)data.size() * Rows, Rows, compSize,
 					glType, integral, (const uint8_t *)data.data());
 
 				return *this;
