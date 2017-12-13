@@ -1,6 +1,7 @@
 #include "nsessentials/util/UnionFind.h"
 
 #include <stdio.h>
+#include <cstdint>
 
 using namespace nse::util;
 
