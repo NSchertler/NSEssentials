@@ -57,7 +57,7 @@ namespace nse {
 				}
 			}
 
-			template <typename RHSType, typename SolutionType, typename Scalar = RHSType::Scalar>
+			template <typename RHSType, typename SolutionType, typename Scalar = typename RHSType::Scalar>
 			void solveWithGuess(const RHSType& rhs, const SolutionType& guess, SolutionType& solution)
 			{
 				Eigen::Matrix<Scalar, -1, 1>
