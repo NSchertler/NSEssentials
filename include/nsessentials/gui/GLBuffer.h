@@ -56,7 +56,7 @@ namespace nse {
 			template <typename Scalar, int Rows>
 			GLBuffer& uploadData(const std::vector<Eigen::Matrix<Scalar, Rows, 1>>& data)
 			{
-				uint32_t compSize = sizeof(typename Scalar);
+				uint32_t compSize = sizeof(Scalar);
 				GLuint glType = (GLuint)nanogui::detail::type_traits<Scalar>::type;
 				bool integral = (bool)nanogui::detail::type_traits<Scalar>::integral;
 
