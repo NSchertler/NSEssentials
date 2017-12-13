@@ -115,7 +115,7 @@ namespace nse {
 
 #pragma omp parallel for
 						for (int i = 0; i < rhs.rows(); i++)
-							solution.coeffRef(i, col) = (SolutionType::Scalar)(solution.coeff(i, col) + d(i) * alpha);
+							solution.coeffRef(i, col) = (typename SolutionType::Scalar)(solution.coeff(i, col) + d(i) * alpha);
 
 						const int RESET_COUNT = 50;
 						if ((it % RESET_COUNT) == (RESET_COUNT - 1))
@@ -134,7 +134,7 @@ namespace nse {
 #pragma omp parallel for
 							for (int i = 0; i < rhs.rows(); i++)
 							{
-								r(i) = (RHSType::Scalar)(r(i) - q(i) * alpha);
+								r(i) = (typename RHSType::Scalar)(r(i) - q(i) * alpha);
 								s(i) = invDiag(i) * r(i);
 							}
 						}
@@ -148,7 +148,7 @@ namespace nse {
 						Scalar beta = delta_new / delta_old;
 #pragma omp parallel for
 						for (int i = 0; i < rhs.rows(); i++)
-							d(i) = (RHSType::Scalar)(s(i) + d(i) * beta);
+							d(i) = (typename RHSType::Scalar)(s(i) + d(i) * beta);
 					}
 					_iterations += it;
 				} //for every column
