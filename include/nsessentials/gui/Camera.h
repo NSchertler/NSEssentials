@@ -51,6 +51,9 @@ namespace nse {
 			//Forwarded resize event.
 			void resize(const Eigen::Vector2i & s);
 
+			//Returns the point that the camera focuses on
+			const Eigen::Vector3f& GetFocusPoint() const;
+
 			struct CamParams
 			{
 				nanogui::Arcball arcball;

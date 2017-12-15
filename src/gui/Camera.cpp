@@ -60,6 +60,11 @@ void Camera::FocusOnPoint(const Eigen::Vector3f& point)
 	params.focusPoint = point;
 }
 
+const Eigen::Vector3f& Camera::GetFocusPoint() const
+{
+	return params.focusPoint;
+}
+
 bool Camera::HandleMouseButton(const Eigen::Vector2i & p, int button, bool down, int modifiers)
 {
 	if (button == GLFW_MOUSE_BUTTON_1 && modifiers == 0)
