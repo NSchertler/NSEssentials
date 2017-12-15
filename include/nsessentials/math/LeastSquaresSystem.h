@@ -49,8 +49,8 @@ namespace nse {
 				rhs += value;
 			}
 
-			template <typename ReturnType = typename std::enable_if<SolutionColumns == 1, void>::type>
-			ReturnType addToRHS(Scalar value)
+			template <int Cols = SolutionColumns>
+			void addToRHS(typename std::enable_if<Cols == 1, Scalar>::type value)
 			{
 				rhs(0) += value;
 			}

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <cstddef>
 
 namespace nse
 {
@@ -18,7 +19,7 @@ namespace nse
 			void SaveToFile(const char* filename) const;
 
 			// Returns the number of entries
-			size_t size() const;
+			std::size_t size() const;
 
 			// Loads the entire structure from a file. Existing data in the structure is overridden.
 			void LoadFromFile(const char* filename);
@@ -26,7 +27,7 @@ namespace nse
 			// Adds an item to the structure
 			void AddItem();
 
-			void AddItems(size_t count);
+			void AddItems(std::size_t count);
 
 			void Clear();
 

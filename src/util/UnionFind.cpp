@@ -1,6 +1,7 @@
 #include "nsessentials/util/UnionFind.h"
 
 #include <stdio.h>
+#include <cstdint>
 
 using namespace nse::util;
 
@@ -14,7 +15,7 @@ void UnionFind::SaveToFile(const char* filename) const
 	fclose(file);
 }
 
-size_t UnionFind::size() const { return parentIndices.size(); }
+std::size_t UnionFind::size() const { return parentIndices.size(); }
 
 // Loads the entire structure from a file. Existing data in the structure is overridden.
 void UnionFind::LoadFromFile(const char* filename)
@@ -37,7 +38,7 @@ void UnionFind::AddItem()
 	ranks.push_back(0);
 }
 
-void UnionFind::AddItems(size_t count)
+void UnionFind::AddItems(std::size_t count)
 {
 	auto oldCount = parentIndices.size();
 	parentIndices.resize(parentIndices.size() + count);
