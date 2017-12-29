@@ -43,6 +43,13 @@ namespace nse {
 				rhs -= coefficient * fixed;
 			}
 
+			//Adds the summand coefficient * fixed to the left-hand side of the equation.
+			template <int Cols = SolutionColumns>
+			void addCoefficientWithFixed(Scalar coefficient, typename std::enable_if<Cols == 1, Scalar>::type fixed)
+			{
+				rhs(0) -= coefficient * fixed;
+			}
+
 			//Adds value to the right-hand side of the equation.
 			void addToRHS(const Eigen::Matrix<Scalar, SolutionColumns, 1>& value)
 			{
