@@ -128,6 +128,19 @@ namespace nse {
 				addRowAtomic<0>(row, weight);
 			}
 
+			// Interprets the linear constraint represented by row as the derivative of the quadratic objective function with respect to
+			// derivedUnknown and adds an according row to the system. If addSymmetricCounterpart is true, it also adds an according column.
+			void addRowAsDerivative(const LinearSystemRow<SolutionColumns, Scalar>& row, int derivedUnknown, bool addSymmetricCounterpart)
+			{
+				for (auto& entry : row.lhsCoefficients)
+				{
+					lhs.coeffRef(derivedUnknown, entry.first) += entry.second;
+					if(addSymmetricCounterpart && entry.first != derivedUnknown)
+						lhs.coeffRef(entry.first, derivedUnknown) += entry.second;
+				}
+				rhs.row(derivedUnknown) += row.rhs.transpose();
+			}
+
 			template <typename EigenSolver>
 			Eigen::Matrix<Scalar, Eigen::Dynamic, SolutionColumns> solve(EigenSolver& solver, const Eigen::Matrix<Scalar, Eigen::Dynamic, SolutionColumns>& initialGuess)
 			{
