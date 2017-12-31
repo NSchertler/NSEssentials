@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <cstdint>
+#include <cassert>
 
 using namespace nse::util;
 
@@ -103,6 +104,23 @@ UnionFind::index_t UnionFind::Merge(index_t i1, index_t i2)
 		++ranks[rep1];
 		return rep1;
 	}
+}
+
+void UnionFind::MergeWithPredefinedRoot(index_t newRoot, index_t i)
+{
+	assert(GetRepresentative(newRoot) == newRoot);
+
+	index_t rep2 = GetRepresentative(i);
+
+	if (newRoot == rep2)
+		return;
+
+	unsigned int rank1 = ranks[newRoot];
+	unsigned int rank2 = ranks[rep2];
+
+	if (rank1 == rank2)
+		++ranks[newRoot];
+	ConcreteMerge(newRoot, i);
 }
 
 void UnionFind::ConcreteMerge(index_t newRoot, index_t child)

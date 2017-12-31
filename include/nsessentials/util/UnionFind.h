@@ -38,6 +38,10 @@ namespace nse
 			// Merges the sets of the two specified entries. Returns the new root.
 			index_t Merge(index_t i1, index_t i2);
 
+			// Merges the sets of the two specified entries, such that the specified entry will be the new root of the subtree.
+			//newRoot must already be the representative of itself.
+			void MergeWithPredefinedRoot(index_t newRoot, index_t i);
+
 		protected:
 			void ConcreteMerge(index_t newRoot, index_t child);
 
