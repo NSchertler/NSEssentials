@@ -53,6 +53,7 @@ namespace nse {
 
 			std::chrono::high_resolution_clock::time_point lastClickTime;
 			int lastClickButton;
+			Eigen::Vector2i lastClickPosition;
 
 			virtual bool scrollHook(const Eigen::Vector2i & p, const Eigen::Vector2f & rel) { return false; }
 			virtual bool mouseButtonHook(const Eigen::Vector2i & p, int button, bool down, int modifiers) { return false; }

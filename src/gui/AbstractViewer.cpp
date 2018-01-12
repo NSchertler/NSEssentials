@@ -61,7 +61,7 @@ bool AbstractViewer::mouseButtonEvent(const Eigen::Vector2i &p, int button, bool
 		return true;
 
 	auto now = std::chrono::high_resolution_clock::now();
-	if (std::chrono::duration_cast<std::chrono::milliseconds>(now - lastClickTime).count() < 300 && !down && button == lastClickButton)
+	if (std::chrono::duration_cast<std::chrono::milliseconds>(now - lastClickTime).count() < 300 && !down && button == lastClickButton && (p - lastClickPosition).cwiseAbs().sum() <= 2)
 	{
 		if (button == GLFW_MOUSE_BUTTON_LEFT)
 		{
@@ -79,6 +79,7 @@ bool AbstractViewer::mouseButtonEvent(const Eigen::Vector2i &p, int button, bool
 	{
 		lastClickTime = now;
 		lastClickButton = button;
+		lastClickPosition = p;
 	}
 
 	return _camera.HandleMouseButton(p, button, down, modifiers);	
