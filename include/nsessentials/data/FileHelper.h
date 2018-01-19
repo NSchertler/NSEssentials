@@ -31,6 +31,19 @@ namespace nse {
 			return str;
 		}
 
+		inline bool str_ends_with(const std::string& str, const std::string& end)
+		{
+			//https://stackoverflow.com/a/874160/1210053
+			if (str.length() >= end.length())
+			{
+				return (0 == str.compare(str.length() - end.length(), end.length(), end));
+			}
+			else 
+			{
+				return false;
+			}
+		}
+
 		inline bool file_exists(const std::string& path)
 		{
 			//implementation from https://stackoverflow.com/a/12774387/1210053
