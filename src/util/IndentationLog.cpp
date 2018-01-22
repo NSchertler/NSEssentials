@@ -24,23 +24,20 @@ IndentationLog::IndentationLog(std::ostream& dest)
 	owner.rdbuf(this);	
 }
 
-void IndentationLog::startBlock(const std::string & message)
-{
-	owner << message;
+void IndentationLog::startBlock()
+{	
 	blocks.emplace_back();
 }
 
 void IndentationLog::endBlock()
-{
-	auto time = blocks.back().t.value();
+{	
 	if (!blocks.back().hasContent)
 	{
 		internalOutput = true;
 		owner << " ";
 		internalOutput = false;
 	}
-	blocks.resize(blocks.size() - 1);
-	owner << "done (took " << timeString((double)time) << ")." << std::endl;
+	blocks.resize(blocks.size() - 1);	
 }
 
 int IndentationLog::overflow(int ch)
@@ -73,19 +70,26 @@ TimedBlock::TimedBlock(const std::string & s, bool highPriority)
 		return;
 	}
 #endif
-	ilog.startBlock(s);
+	std::cout << s;
+	ilog.startBlock();
 }
 
 TimedBlock::~TimedBlock()
 {
-	if(!exited)
-		ilog.endBlock();
+	closeBlock();
 }
 
-void TimedBlock::earlyExit()
+size_t TimedBlock::time() const
+{
+	return t.value();
+}
+
+void TimedBlock::closeBlock()
 {
 	if (exited)
 		return;
+	auto time = t.value();
 	ilog.endBlock();
 	exited = true;
+	std::cout << "done (took " << timeString((double)time) << ")." << std::endl;
 }

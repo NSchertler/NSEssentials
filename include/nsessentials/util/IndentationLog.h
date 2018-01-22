@@ -28,7 +28,7 @@ namespace nse {
 			IndentationLog(std::ostream& dest);
 
 			//Starts a block, such that all further output is indented.
-			void startBlock(const std::string& message);
+			void startBlock();
 
 			//Ends an indentation block
 			void endBlock();
@@ -49,7 +49,6 @@ namespace nse {
 				{ }
 
 				bool hasContent;
-				nse::util::Timer<> t;
 			};
 
 			bool internalOutput;
@@ -66,9 +65,12 @@ namespace nse {
 			TimedBlock(const std::string& s, bool highPriority = false);
 			~TimedBlock();
 
-			void earlyExit();
+			void closeBlock();
+			size_t time() const;
 		private:
+
 			bool exited;
+			nse::util::Timer<> t;
 		};
 	}
 }
