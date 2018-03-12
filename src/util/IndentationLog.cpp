@@ -59,37 +59,3 @@ int IndentationLog::overflow(int ch)
 	isAtStartOfLine = ch == '\n';
 	return dest->sputc(ch);
 }
-
-TimedBlock::TimedBlock(const std::string & s, bool highPriority)
-	: exited(false)
-{
-#ifdef REDUCED_TIMINGS
-	if (!highPriority)
-	{
-		exited = true;
-		return;
-	}
-#endif
-	std::cout << s;
-	ilog.startBlock();
-}
-
-TimedBlock::~TimedBlock()
-{
-	closeBlock();
-}
-
-size_t TimedBlock::time() const
-{
-	return t.value();
-}
-
-void TimedBlock::closeBlock()
-{
-	if (exited)
-		return;
-	auto time = t.value();
-	ilog.endBlock();
-	exited = true;
-	std::cout << "done (took " << timeString((double)time) << ")." << std::endl;
-}

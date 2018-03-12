@@ -15,7 +15,6 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include <nsessentials/util/Timer.h>
 
 namespace nse {
 	namespace util
@@ -55,22 +54,5 @@ namespace nse {
 			std::vector<BlockInfo> blocks;
 		};
 		extern IndentationLog ilog;
-
-		//RAII style object that indents all output during its lifetime. Furthermore,
-		//measures the time until destruction and outputs it.
-		struct TimedBlock
-		{
-			//s - Initial output of the block (usually used to name the current operation).
-			//highPriority - if REDUCED_TIMINGS is defined, omits all blocks with highPriority=false
-			TimedBlock(const std::string& s, bool highPriority = false);
-			~TimedBlock();
-
-			void closeBlock();
-			size_t time() const;
-		private:
-
-			bool exited;
-			nse::util::Timer<> t;
-		};
 	}
 }
