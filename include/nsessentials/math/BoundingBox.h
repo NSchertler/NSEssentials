@@ -41,7 +41,7 @@ namespace nse {
 			}
 
 			//Computes the intersection of two axis-aligned bounding boxes and returns if there is an intersection.
-			bool intersect(const BoundingBox<T, DIM>& bb1, const BoundingBox<T, DIM>& bb2, BoundingBox<T, DIM>& out) const
+			static bool intersect(const BoundingBox<T, DIM>& bb1, const BoundingBox<T, DIM>& bb2, BoundingBox<T, DIM>& out)
 			{
 				for (int i = 0; i < DIM; ++i)
 				{
@@ -57,7 +57,7 @@ namespace nse {
 			}
 
 			//Computes the union of two axis-aligned bounding boxes.
-			void unite(const BoundingBox<T, DIM>& bb1, const BoundingBox<T, DIM>& bb2, BoundingBox<T, DIM>& out) const
+			static void unite(const BoundingBox<T, DIM>& bb1, const BoundingBox<T, DIM>& bb2, BoundingBox<T, DIM>& out)
 			{
 				for (int i = 0; i < DIM; ++i)
 				{

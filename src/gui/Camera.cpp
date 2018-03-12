@@ -45,11 +45,17 @@ void Camera::Zoom(float amount)
 	params.viewDistance = std::max(0.001f * params.sceneRadius, params.viewDistance * std::pow(0.90f, amount));
 }
 
+void Camera::SetSceneExtent(const nse::math::BoundingBox<float, 3>& bbox)
+{
+	params.sceneCenter = 0.5f * (bbox.min + bbox.max);	
+	params.sceneRadius = bbox.diagonal().norm() / 2.0f;
+}
+
 void Camera::FocusOnBBox(const nse::math::BoundingBox<float, 3>& bbox)
 {
-	params.sceneCenter = 0.5f * (bbox.min + bbox.max);
+	SetSceneExtent(bbox);
+
 	params.focusPoint = params.sceneCenter;
-	params.sceneRadius = bbox.diagonal().norm() / 2.0f;
 
 	float fov = params.fovy * std::min(1.0f, (float)parent.width() / parent.height());
 	params.viewDistance = params.sceneRadius / sinf(fov / 2.0f * (float)M_PI / 180);	

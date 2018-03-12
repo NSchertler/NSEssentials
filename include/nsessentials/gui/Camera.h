@@ -37,6 +37,9 @@ namespace nse {
 			//Applies a zoom by scaling the scene. Positive values of amount increase object sizes.
 			void Zoom(float amount);
 
+			//Sets the extent of the scene, which is kept between znear/zfar.
+			void SetSceneExtent(const nse::math::BoundingBox<float, 3>& bbox);
+
 			//Translates and zooms the camera in a way that it shows the entire bounding box while keeping the orientation.
 			//The parameters are only estimated; it is not guaranteed that the bounding box actually fits in the viewport.
 			void FocusOnBBox(const nse::math::BoundingBox<float, 3>& bbox);
