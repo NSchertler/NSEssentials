@@ -7,6 +7,8 @@
 	@author Nico Schertler
 */
 
+#pragma once
+
 #include <nsessentials/util/Timer.h>
 
 namespace nse {
