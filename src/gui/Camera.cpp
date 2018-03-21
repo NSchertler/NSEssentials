@@ -10,6 +10,7 @@
 
 #ifdef HAVE_NANOGUI
 
+#include <cmath>
 #include "nsessentials/gui/Camera.h"
 
 using namespace nse::gui;
