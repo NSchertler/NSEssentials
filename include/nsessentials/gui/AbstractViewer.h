@@ -16,11 +16,13 @@
 
 #include <chrono>
 
+#include "nsessentials/NSELibrary.h"
+
 namespace nse {
 	namespace gui
 	{
 		//This base class provides basic functionality for 3D interaction.
-		class AbstractViewer : public nanogui::Screen
+		class NSE_EXPORT AbstractViewer : public nanogui::Screen
 		{
 		public:
 			AbstractViewer(const std::string& title, int width = 1280, int height = 800, int nSamples = 4);

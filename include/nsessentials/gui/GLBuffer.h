@@ -13,6 +13,8 @@
 #ifdef HAVE_NANOGUI
 #include <nanogui/glutil.h>
 
+#include "nsessentials/NSELibrary.h"
+
 namespace nse {
 	namespace gui
 	{
@@ -27,7 +29,7 @@ namespace nse {
 		};
 
 		//Represents a generic OpenGL buffer
-		class GLBuffer
+		class NSE_EXPORT GLBuffer
 		{
 		public:
 			GLBuffer(GLBufferType type);

@@ -14,14 +14,6 @@
 
 using namespace nse::util;
 
-namespace nse
-{
-	namespace util
-	{
-		template class Timer<>;
-	}
-}
-
 std::string nse::util::timeString(double time, bool precise)
 {
 	if (std::isnan(time) || std::isinf(time))

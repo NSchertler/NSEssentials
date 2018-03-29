@@ -15,11 +15,16 @@
 #include <iomanip>
 #include <sstream>
 
+#include "nsessentials/NSELibrary.h"
+
+template class NSE_EXPORT std::chrono::duration<std::chrono::system_clock::rep, std::chrono::system_clock::period>;
+template class NSE_EXPORT std::chrono::time_point<std::chrono::system_clock>;
+
 namespace nse {
 	namespace util
 	{
 		template <typename TimeT = std::chrono::milliseconds>
-		class Timer
+		class NSE_EXPORT Timer
 		{
 		public:
 			Timer()
@@ -45,9 +50,11 @@ namespace nse {
 			std::chrono::system_clock::time_point start;
 		};
 
+		template class NSE_EXPORT Timer<>;
+
 		//Converts the provided number of milliseconds to a readable string.
 		//If precise=true, uses milliseconds. If precise=false, converts to 
 		//an appropriate unit.
-		extern ::std::string timeString(double time, bool precise = false);
+		extern NSE_EXPORT ::std::string timeString(double time, bool precise = false);
 	}
 }

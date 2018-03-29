@@ -11,11 +11,13 @@
 
 #include <cinttypes>
 
+#include "nsessentials/NSELibrary.h"
+
 namespace nse {
 	namespace math
 	{
 		//Represents a three-dimensional 64-bit Morton Code.
-		class MortonCode64
+		class NSE_EXPORT MortonCode64
 		{
 		public:
 			MortonCode64();

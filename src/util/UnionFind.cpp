@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <cstdint>
 #include <cassert>
+#include <stdexcept>
 
 using namespace nse::util;
 
@@ -24,11 +25,14 @@ void UnionFind::LoadFromFile(const char* filename)
 	uint64_t entries;
 
 	FILE* file = fopen(filename, "rb");
-	fread(&entries, sizeof(uint64_t), 1, file);
+	if(fread(&entries, sizeof(uint64_t), 1, file) != 1)
+		throw std::runtime_error("Cannot read enough data from file");
 	parentIndices.resize(entries);
 	ranks.resize(entries);
-	fread(&parentIndices[0], sizeof(index_t), entries, file);
-	fread(&ranks[0], sizeof(unsigned int), entries, file);
+	if(fread(&parentIndices[0], sizeof(index_t), entries, file) != entries)
+		throw std::runtime_error("Cannot read enough data from file");
+	if(fread(&ranks[0], sizeof(unsigned int), entries, file) != entries)
+		throw std::runtime_error("Cannot read enough data from file");
 	fclose(file);
 }
 
@@ -43,7 +47,7 @@ void UnionFind::AddItems(std::size_t count)
 {
 	auto oldCount = parentIndices.size();
 	parentIndices.resize(parentIndices.size() + count);
-	for (int i = oldCount; i < parentIndices.size(); ++i)
+	for (index_t i = static_cast<index_t>(oldCount); i < parentIndices.size(); ++i)
 		parentIndices[i] = i;
 	ranks.resize(ranks.size() + count);
 }

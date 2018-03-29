@@ -11,12 +11,14 @@
 
 #include <nsessentials/util/Timer.h>
 
+#include "nsessentials/NSELibrary.h"
+
 namespace nse {
 	namespace util
 	{		
 		//RAII style object that indents all output during its lifetime. Furthermore,
 		//measures the time until destruction and outputs it.
-		struct TimedBlock
+		struct NSE_EXPORT TimedBlock
 		{
 			//s - Initial output of the block (usually used to name the current operation).
 			//highPriority - if REDUCED_TIMINGS is defined, omits all blocks with highPriority=false

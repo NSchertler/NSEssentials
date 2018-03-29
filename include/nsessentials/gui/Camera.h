@@ -16,12 +16,14 @@
 
 #include "nsessentials/math/BoundingBox.h"
 
+#include "nsessentials/NSELibrary.h"
+
 namespace nse {
 	namespace gui
 	{
 
 		//Provides a 3D camera with arcball interaction capabilities.
-		class Camera
+		class NSE_EXPORT Camera
 		{
 		public:
 

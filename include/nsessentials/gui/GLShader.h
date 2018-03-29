@@ -15,12 +15,14 @@
 #include <nanogui/glutil.h>
 #include <string>
 
+#include "nsessentials/NSELibrary.h"
+
 namespace nse {
 	namespace gui
 	{
 
 		//Represents an OpenGL shader program
-		class GLShader
+		class NSE_EXPORT GLShader
 		{
 		public:
 			/// Create an unitialized OpenGL shader program

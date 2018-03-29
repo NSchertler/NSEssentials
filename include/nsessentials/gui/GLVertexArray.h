@@ -12,11 +12,13 @@
 #ifdef HAVE_NANOGUI
 #include <nanogui/opengl.h>
 
+#include "nsessentials/NSELibrary.h"
+
 namespace nse {
 	namespace gui
 	{
 		//Represents an OpenGL Vertex Array Object
-		class GLVertexArray
+		class NSE_EXPORT GLVertexArray
 		{
 		public:
 			GLVertexArray();

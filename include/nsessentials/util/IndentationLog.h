@@ -16,6 +16,8 @@
 #include <iostream>
 #include <string>
 
+#include "nsessentials/NSELibrary.h"
+
 namespace nse {
 	namespace util
 	{
@@ -24,13 +26,13 @@ namespace nse {
 		{
 		public:
 
-			IndentationLog(std::ostream& dest);
+			NSE_EXPORT IndentationLog(std::ostream& dest);
 
 			//Starts a block, such that all further output is indented.
-			void startBlock();
+			NSE_EXPORT void startBlock();
 
 			//Ends an indentation block
-			void endBlock();
+			NSE_EXPORT void endBlock();
 
 		protected:
 			virtual int overflow(int ch);
@@ -53,6 +55,6 @@ namespace nse {
 			bool internalOutput;
 			std::vector<BlockInfo> blocks;
 		};
-		extern IndentationLog ilog;
+		extern NSE_EXPORT IndentationLog ilog;
 	}
 }

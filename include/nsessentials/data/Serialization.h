@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <vector>
 #include <deque>
+#include <stdexcept>
 
 namespace nse {
 	namespace data
@@ -26,7 +27,8 @@ namespace nse {
 		template <typename T>
 		void loadFromFile(T& object, FILE* f)
 		{
-			fread(&object, sizeof(T), 1, f);
+			if(fread(&object, sizeof(T), 1, f) != 1)
+				throw std::runtime_error("Cannot read enough data from file");
 		}
 
 		template <typename T, typename Allocator>

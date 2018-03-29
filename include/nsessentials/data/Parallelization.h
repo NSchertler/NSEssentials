@@ -24,6 +24,8 @@
 #include "windows.h" 
 #endif
 
+#include <nsessentials/NSELibrary.h>
+
 namespace nse {
 	namespace data
 	{
@@ -77,10 +79,10 @@ namespace nse {
 		class ordered_lock
 		{
 		public:
-			ordered_lock();
-			void lock();
-			void unlock();
-		protected:
+			NSE_EXPORT ordered_lock();
+			NSE_EXPORT void lock();
+			NSE_EXPORT void unlock();
+		private:
 			std::condition_variable  cvar;
 			std::mutex               cvar_lock;
 			unsigned int             next_ticket, counter;

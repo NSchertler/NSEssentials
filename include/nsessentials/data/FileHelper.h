@@ -22,128 +22,33 @@
 #include <sys/stat.h>
 #endif
 
+#include "nsessentials/NSELibrary.h"
+
 namespace nse {
 	namespace data
 	{
-		inline std::string str_tolower(std::string str)
-		{
-			std::transform(str.begin(), str.end(), str.begin(), ::tolower);
-			return str;
-		}
+		extern NSE_EXPORT std::string str_tolower(const std::string& str);
 
-		inline bool str_ends_with(const std::string& str, const std::string& end)
-		{
-			//https://stackoverflow.com/a/874160/1210053
-			if (str.length() >= end.length())
-			{
-				return (0 == str.compare(str.length() - end.length(), end.length(), end));
-			}
-			else 
-			{
-				return false;
-			}
-		}
+		extern NSE_EXPORT bool str_ends_with(const std::string& str, const std::string& end);
 
-		inline bool file_exists(const std::string& path)
-		{
-			//implementation from https://stackoverflow.com/a/12774387/1210053
-			if (FILE *file = fopen(path.c_str(), "r"))
-			{
-				fclose(file);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
+		extern NSE_EXPORT bool file_exists(const std::string& path);
 
 
 		//returns if a given path is a directory
-		inline bool is_directory(const std::string& path)
-		{
-#if _WIN32
-			return PathIsDirectory(path.c_str());
-#else
-			//code based on https://stackoverflow.com/a/146938/1210053
-			struct stat s;
-			if (stat(path.c_str(), &s) == 0)
-			{
-				if (s.st_mode & S_IFDIR)
-					return true;
-				else
-					return false;
-			}
-			else
-			{
-				throw std::runtime_error("Cannot find properties of path \"" + path + "\".");
-			}
-#endif
-		}
+		extern NSE_EXPORT bool is_directory(const std::string& path);
 
-		inline size_t start_of_extension(const std::string& path)
-		{
-			for (size_t i = path.size() - 1; i > 0; --i)
-			{
-				bool isSeparator = path[i] == '\\' || path[i] == '/';
-				if (isSeparator)
-					return -1;
-				bool isDot = path[i] == '.';
-				if (isDot)
-					return i;
-			}
-			return -1;
-		}
+		extern NSE_EXPORT size_t start_of_extension(const std::string& path);
 
-		inline std::string extension(const std::string& path)
-		{
-			auto soe = start_of_extension(path);
-			if (soe == -1)
-				return "";
-			return str_tolower(path.substr(soe, path.size() - soe));
-		}
+		extern NSE_EXPORT std::string extension(const std::string& path);
 
-		inline std::string replace_extension(const std::string& path, const std::string& new_extension)
-		{
-			auto soe = start_of_extension(path);
-			bool dot_included = new_extension[0] == '.';
-			if (soe == -1)
-				return path;
-			else
-				return path.substr(0, soe + (dot_included ? 0 : 1)) + new_extension;
-		}
+		extern NSE_EXPORT std::string replace_extension(const std::string& path, const std::string& new_extension);
 
-		inline std::string filename_without_extension_and_directory(const std::string& path)
-		{
-			size_t filenameUpTo = path.size();
-			for (size_t i = path.size() - 1; i > 0; --i)
-			{
-				bool isSeparator = path[i] == '\\' || path[i] == '/';
-				if (isSeparator)
-					return path.substr(i + 1, filenameUpTo - i - 1);
-				bool isDot = path[i] == '.';
-				if (isDot && filenameUpTo == path.size())
-					filenameUpTo = i;
-			}
-			return path.substr(0, filenameUpTo);
-		}
+		extern NSE_EXPORT std::string filename_without_extension_and_directory(const std::string& path);
 
 		//Returns the parent of a given path. The parent is found by cutting of everything
 		//after the last directory separator
-		inline std::string parent_path(const std::string& path)
-		{
-			bool observedPathName = false; //the path might end with path separators; this flag determines if we are already past them
-			for (size_t i = path.size() - 1; i > 0; --i)
-			{
-				bool isSeparator = path[i] == '\\' || path[i] == '/';
-				if (isSeparator && observedPathName)
-					return path.substr(0, i);
-				if (!isSeparator)
-					observedPathName = true;
-			}
-			throw std::runtime_error("The path \"" + path + "\" has an invalid format.");
-		}
+		extern NSE_EXPORT std::string parent_path(const std::string& path);
 
-		extern void files_in_dir(const std::string &path, std::vector<std::string>& result);
+		extern NSE_EXPORT void files_in_dir(const std::string &path, std::vector<std::string>& result);
 	}
 }
