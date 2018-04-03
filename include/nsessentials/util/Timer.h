@@ -17,8 +17,11 @@
 
 #include "nsessentials/NSELibrary.h"
 
+#if !(defined(_MSC_VER) && _MSC_VER < 1910)
+//This explicit template instantation and export does not work under Visual Studio <= 2015
 template class NSE_EXPORT std::chrono::duration<std::chrono::system_clock::rep, std::chrono::system_clock::period>;
 template class NSE_EXPORT std::chrono::time_point<std::chrono::system_clock>;
+#endif
 
 namespace nse {
 	namespace util

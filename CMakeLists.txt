@@ -3,7 +3,6 @@ cmake_minimum_required (VERSION 2.8)
 project("NSEssentials")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules/")
-message("CMake module path:" ${CMAKE_MODULE_PATH})
 
 option(NSE_BUILD_SHARED "Build NSEssentials as a shared library" OFF)
 
