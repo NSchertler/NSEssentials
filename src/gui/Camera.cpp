@@ -72,6 +72,35 @@ const Eigen::Vector3f& Camera::GetFocusPoint() const
 	return params.focusPoint;
 }
 
+#include <iostream>
+void Camera::MakeHorizontal()
+{
+	//the camera matrix C (=inverse view matrix)
+	auto matrix = params.arcball.matrix().transpose();
+	Eigen::Vector3f currentXAxis = matrix.col(0).head<3>();
+	Eigen::Vector3f currentYAxis = matrix.col(1).head<3>();
+		
+	//solve for a rotation R about the z-axis, such that [C * R * currentXAxis].y = 0
+	//find the target of the x-axis in the plane: s * x + t * y, s.t. s^2 + t^2 = 1
+
+	float xy = currentXAxis.y();
+	float yy = currentYAxis.y();
+	float s = sqrt(1.0f / (1 + (xy * xy) / (yy * yy)));
+	float t = -s * xy / yy;
+	float angle = std::atan2(t, s);
+	params.arcball.state() = Eigen::AngleAxisf(-angle, Eigen::Vector3f::UnitZ()) * params.arcball.state();
+}
+
+void Camera::RotateAroundFocusPointGlobal(const Eigen::Quaternionf& rotation)
+{
+	params.arcball.state() *= rotation.conjugate();
+}
+
+void Camera::RotateAroundFocusPointLocal(const Eigen::Quaternionf& rotation)
+{
+	params.arcball.state() = rotation.conjugate() * params.arcball.state();
+}
+
 bool Camera::HandleMouseButton(const Eigen::Vector2i & p, int button, bool down, int modifiers)
 {
 	if (button == GLFW_MOUSE_BUTTON_1 && modifiers == 0)

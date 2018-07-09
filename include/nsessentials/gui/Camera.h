@@ -49,6 +49,17 @@ namespace nse {
 			//Keeps the camera's rotation and viewing distance and sets the focus point to the provided location.
 			void FocusOnPoint(const Eigen::Vector3f& point);
 
+			//Rotates the camera, such that it becomes horizontally aligned
+			void MakeHorizontal();
+
+			//Rotates the camera around the current focus point by rotation. The rotation is expressed in the
+			//camera's local coordinate system.
+			void RotateAroundFocusPointLocal(const Eigen::Quaternionf& rotation);
+
+			//Rotates the camera around the current focus point by rotation. The rotation is expressed in the
+			//global coordinate system.
+			void RotateAroundFocusPointGlobal(const Eigen::Quaternionf& rotation);
+
 			//Forwarded mouse button event.
 			bool HandleMouseButton(const Eigen::Vector2i &p, int button, bool down, int modifiers);
 			//Forwarded mouse move event.
