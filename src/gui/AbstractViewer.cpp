@@ -70,7 +70,7 @@ bool AbstractViewer::mouseButtonEvent(const Eigen::Vector2i &p, int button, bool
 			if (depth < 1)
 			{
 				_camera.FocusOnPoint(point);
-				glfwSetCursorPos(mGLFWWindow, width() / 2, height() / 2);
+				glfwSetCursorPos(mGLFWWindow, width() * mPixelRatio / 2, height() / 2 * mPixelRatio);
 			}
 		}
 	}
@@ -107,7 +107,7 @@ bool AbstractViewer::resizeEvent(const Eigen::Vector2i & s)
 float AbstractViewer::get3DPosition(const Eigen::Vector2i & screenPos, Eigen::Vector4f & pos)
 {
 	float depth;
-	glReadPixels(screenPos.x(), height() - 1 - screenPos.y(), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+	glReadPixels(screenPos.x() * mPixelRatio, (height() - 1 - screenPos.y()) * mPixelRatio, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
 
 	float ndcDepth = 2 * (depth - 0.5f);
 
