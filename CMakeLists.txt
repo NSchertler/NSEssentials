@@ -57,23 +57,32 @@ else()
 endif()
 
 add_library(nsessentials ${NSE_BUILD_TYPE}			
-			src/data/FileHelper.cpp
-			src/data/Parallelization.cpp
+			src/data/FileHelper.cpp  include/nsessentials/data/FileHelper.h
+			src/data/Parallelization.cpp  include/nsessentials/data/Parallelization.h
+			include/nsessentials/data/PersistentIndexContainer.h
+			include/nsessentials/data/Serialization.h
 			
-			src/gui/AbstractViewer.cpp			
-			src/gui/Camera.cpp
-			src/gui/GLBuffer.cpp
-			src/gui/GLShader.cpp
-			src/gui/GLVertexArray.cpp
+			src/gui/AbstractViewer.cpp  include/nsessentials/gui/AbstractViewer.h
+			src/gui/Camera.cpp  include/nsessentials/gui/Camera.h
+			src/gui/GLBuffer.cpp  include/nsessentials/gui/GLBuffer.h
+			src/gui/GLShader.cpp  include/nsessentials/gui/GLShader.h
+			src/gui/GLVertexArray.cpp  include/nsessentials/gui/GLVertexArray.h
 
-			src/math/BoundingBox.cpp
-			src/math/Morton.cpp
+			src/math/BoundingBox.cpp  include/nsessentials/math/BoundingBox.h
+			include/nsessentials/math/QuadraticEnergy.h
+			src/math/Morton.cpp  include/nsessentials/math/Morton.h
+			include/nsessentials/math/ParallelCG.h
 
-			src/util/IndentationLog.cpp
-			src/util/TimedBlock.cpp
-			src/util/Timer.cpp
-			src/util/GLDebug.cpp
-			src/util/UnionFind.cpp)
+			src/util/GLDebug.cpp  include/nsessentials/util/GLDebug.h
+			src/util/IndentationLog.cpp  include/nsessentials/util/IndentationLog.h
+			include/nsessentials/util/MathematicaFormatter.h
+			include/nsessentials/util/Observer.h
+			src/util/TimedBlock.cpp  include/nsessentials/util/TimedBlock.h
+			src/util/Timer.cpp  include/nsessentials/util/Timer.h			
+			src/util/UnionFind.cpp  include/nsessentials/util/UnionFind.h
+			
+			include/nsessentials/NSELibrary.h
+			)
 
 if(NSE_BUILD_SHARED)
 	target_link_libraries(nsessentials ${LIBS})
