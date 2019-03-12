@@ -68,10 +68,11 @@ add_library(nsessentials ${NSE_BUILD_TYPE}
 			src/gui/GLShader.cpp  include/nsessentials/gui/GLShader.h
 			src/gui/GLVertexArray.cpp  include/nsessentials/gui/GLVertexArray.h
 
-			src/math/BoundingBox.cpp  include/nsessentials/math/BoundingBox.h
-			include/nsessentials/math/QuadraticEnergy.h
+			src/math/BoundingBox.cpp  include/nsessentials/math/BoundingBox.h						
+			include/nsessentials/math/MixedIntegerGreedyRounding.h
 			src/math/Morton.cpp  include/nsessentials/math/Morton.h
 			include/nsessentials/math/ParallelCG.h
+			include/nsessentials/math/QuadraticEnergy.h
 
 			src/util/GLDebug.cpp  include/nsessentials/util/GLDebug.h
 			src/util/IndentationLog.cpp  include/nsessentials/util/IndentationLog.h

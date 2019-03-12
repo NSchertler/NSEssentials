@@ -16,12 +16,12 @@
 namespace nse {
 	namespace math
 	{
-		template <int SubEnergies, typename Scalar = float>
+		template <int SubEnergie = 1, typename Scalar = float>
 		class QuadraticEnergy;
 		
 		// Represents a linear constraint of the form:
 		//   Σ c_i * x_i = b
-		template <int SubEnergies, typename Scalar = float>
+		template <int SubEnergies = 1, typename Scalar = float>
 		class LinearConstraint
 		{
 		public:
