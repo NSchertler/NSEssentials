@@ -98,6 +98,23 @@ namespace nse {
 				unknowns(numberOfUnknowns), nextConstraint(numberOfUnknowns)
 			{ }
 
+			//Reserves the specified number of entries per row in the sparse matrix.
+			void reserve(size_t _n) { _A.reserve(_n); }
+
+			//Reserves the specified number of entries per row in the sparse matrix.
+			template<class SizesType>
+			void reserve(const SizesType& reserveSizes, const typename SizesType::value_type& enableif = typename SizesType::value_type())
+			{
+				_A.reserve(reserveSizes);
+			}
+
+			//Reserves the specified number of entries per row in the sparse matrix.
+			template<class SizesType>
+			void reserve(const SizesType& reserveSizes, const typename SizesType::Scalar& enableif = typename SizesType::Scalar())
+			{
+				_A.reserve(reserveSizes);
+			}
+
 			// Calculates a specific subenergy for a given argument x.
 			//   iSubEnergy: the index of the subenergy to calculate, must be in [0, SubEnergies)
 			Scalar energy(int iSubEnergy, const Eigen::Matrix<Scalar, -1, 1>& x) const
