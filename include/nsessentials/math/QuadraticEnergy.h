@@ -99,7 +99,7 @@ namespace nse {
 			{ }
 
 			//Reserves the specified number of entries per row in the sparse matrix.
-			void reserve(size_t _n) { _A.reserve(_n); }
+			void reserve(int _n) { _A.reserve(_n); }
 
 			//Reserves the specified number of entries per row in the sparse matrix.
 			template<class SizesType>
