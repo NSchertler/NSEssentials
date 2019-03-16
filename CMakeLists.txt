@@ -81,7 +81,9 @@ add_library(nsessentials ${NSE_BUILD_TYPE}
 			src/util/TimedBlock.cpp  include/nsessentials/util/TimedBlock.h
 			src/util/Timer.cpp  include/nsessentials/util/Timer.h			
 			src/util/UnionFind.cpp  include/nsessentials/util/UnionFind.h
-			
+			include/nsessentials/util/IteratorRange.h
+			include/nsessentials/util/FlatteningIterator.h
+
 			include/nsessentials/NSELibrary.h
 			)
 
