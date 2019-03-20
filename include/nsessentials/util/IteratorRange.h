@@ -16,48 +16,42 @@ namespace nse
 	namespace util
 	{
 		template <typename Iterator>
-		class IteratorRangeBase
+		class IteratorRange
 		{
 		public:
 
 			typedef Iterator iterator;
 
-			IteratorRangeBase(Iterator begin, Iterator end)
+			IteratorRange(Iterator begin, Iterator end)
 				: _begin(begin), _end(end)
 			{ }
 
 			Iterator begin() const { return _begin; }
 			Iterator end() const { return _end; }
+			
+			//Size of the range, only available for random access iterators
+			template <typename IIterator = Iterator>
+			typename std::enable_if<std::is_base_of<std::random_access_iterator_tag, typename std::iterator_traits<IIterator>::iterator_category>::value,
+				typename std::iterator_traits<IIterator>::difference_type>::type
+			size() const { return _end - _begin; }
+
+			//Random access operator, only available for random access iterators
+			template <typename IIterator = Iterator>
+			typename std::enable_if<std::is_base_of<std::random_access_iterator_tag, typename std::iterator_traits<IIterator>::iterator_category>::value,
+				typename std::iterator_traits<IIterator>::reference>::type
+			operator[](int i) const { return *(_begin + i); }
+
+			//Returns a new range in the reverse direction of this range, only available for bidirectional iterators
+			template <typename IIterator = Iterator>
+			typename std::enable_if<std::is_base_of<std::bidirectional_iterator_tag, typename std::iterator_traits<IIterator>::iterator_category>::value,
+				IteratorRange<std::reverse_iterator<IIterator>>>::type
+			Reverse() const
+			{
+				return IteratorRange<std::reverse_iterator<IIterator>>(std::reverse_iterator<IIterator>(_end), std::reverse_iterator<IIterator>(_begin));
+			}
 
 		protected:
 			Iterator _begin, _end;
-		};
-
-		//Helper class to wrap a pair of iterators in a structure that can be iterated with
-		//a range-based for loop.
-		template <typename Iterator, typename IteratorCategory = typename std::iterator_traits<Iterator>::iterator_category>
-		class IteratorRange
-			: public IteratorRangeBase<Iterator>
-		{			
-		public:
-			IteratorRange(Iterator begin, Iterator end)
-				: IteratorRangeBase(begin, end)
-			{ }
-		};
-
-		//Helper class to wrap a pair of iterators in a structure that can be iterated with
-		//a range-based for loop. Additionally, helper methods for random access are available.
-		template <typename Iterator>
-		class IteratorRange<Iterator, std::random_access_iterator_tag>
-			: public IteratorRangeBase<Iterator>
-		{
-		public:
-			IteratorRange(Iterator begin, Iterator end)
-				: IteratorRangeBase(begin, end)
-			{ }
-
-			typename std::iterator_traits<Iterator>::difference_type size() const { return _end - _begin; }
-			typename std::iterator_traits<Iterator>::reference operator[](int i) const { return *(_begin + i); }
 		};
 
 		template <typename Iterator>
