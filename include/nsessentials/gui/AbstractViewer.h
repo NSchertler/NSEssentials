@@ -42,8 +42,8 @@ namespace nse {
 			bool shiftDown() const { return _shiftDown; }
 
 			//returns depth buffer value
-			float get3DPosition(const Eigen::Vector2i& screenPos, Eigen::Vector4f& pos);
-			float get3DPosition(const Eigen::Vector2i& screenPos, Eigen::Vector3f& pos);
+			float get3DPosition(const Eigen::Vector2i& screenPos, Eigen::Vector4f& pos) const;
+			float get3DPosition(const Eigen::Vector2i& screenPos, Eigen::Vector3f& pos) const;
 
 		protected:
 			const int nSamples;

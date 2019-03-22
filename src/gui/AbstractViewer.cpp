@@ -104,7 +104,7 @@ bool AbstractViewer::resizeEvent(const Eigen::Vector2i & s)
 	return true;
 }
 
-float AbstractViewer::get3DPosition(const Eigen::Vector2i & screenPos, Eigen::Vector4f & pos)
+float AbstractViewer::get3DPosition(const Eigen::Vector2i & screenPos, Eigen::Vector4f & pos) const
 {
 	float depth;
 	glReadPixels(screenPos.x() * mPixelRatio, (height() - 1 - screenPos.y()) * mPixelRatio, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
@@ -126,7 +126,7 @@ float AbstractViewer::get3DPosition(const Eigen::Vector2i & screenPos, Eigen::Ve
 	return depth;
 }
 
-float AbstractViewer::get3DPosition(const Eigen::Vector2i & screenPos, Eigen::Vector3f & pos)
+float AbstractViewer::get3DPosition(const Eigen::Vector2i & screenPos, Eigen::Vector3f & pos) const
 {
 	Eigen::Vector4f pos4;
 	float depth = get3DPosition(screenPos, pos4);
