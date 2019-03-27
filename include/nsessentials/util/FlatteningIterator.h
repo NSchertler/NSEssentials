@@ -16,7 +16,7 @@
 namespace nse
 {
 	namespace util
-	{
+	{				
 		// Iterator that references a position within a container hierarchy. The iterator can be used to
 		// sequentially iterate elements on a given level of the hierarchy.
 		// E.g., the integer values of a std::vector<std::vector<int>> can be iterated using 
@@ -24,21 +24,25 @@ namespace nse
 		//   FlatteningLevels = 1   (how many levels to go down the hierarchy)
 		template <typename Iterator, int FlatteningLevels = 1>
 		class FlatteningIterator
-		{
-			typedef typename FlatteningIterator<Iterator, FlatteningLevels - 1> ParentFlattening;
-		public:
-			typedef std::forward_iterator_tag iterator_category;
-			typedef typename std::iterator_traits<typename ParentFlattening::value_type::iterator>::value_type value_type;
-			typedef size_t difference_type;
-			typedef typename std::iterator_traits<typename ParentFlattening::value_type::iterator>::pointer pointer;
-			typedef typename std::iterator_traits<typename ParentFlattening::value_type::iterator>::reference reference;
+		{		
+		private:
+			typedef FlatteningIterator < Iterator, FlatteningLevels - 1 > ParentFlattening;
 
+			typename ParentFlattening parentIterator;
+			decltype(parentIterator->begin()) leafIterator;
+
+			static const bool IsBidirectional =
+				std::is_base_of<std::bidirectional_iterator_tag, typename std::iterator_traits<decltype(parentIterator)>::iterator_category>::value &&
+				std::is_base_of<std::bidirectional_iterator_tag, typename std::iterator_traits<decltype(leafIterator)>::iterator_category>::value;
+
+		public:
+			
 			FlatteningIterator() { }
 			FlatteningIterator(Iterator topLevelCurrent, Iterator topLevelEnd)
 				: parentIterator(topLevelCurrent, topLevelEnd)
 			{
 				if (!parentIterator.isAtEnd())
-					leafIterator = parentIterator->begin();
+					leafIterator = parentIterator->begin() ;// this->ContainerBegin(parentIterator);
 			}
 
 			FlatteningIterator& operator++()
@@ -55,6 +59,25 @@ namespace nse
 				return *this;
 			}
 
+			template <typename IIterator = Iterator, int Levels = FlatteningLevels>
+			typename std::enable_if<FlatteningIterator<IIterator, Levels>::IsBidirectional, FlatteningIterator&>::type operator--()
+			{
+				bool moved = false;
+				while (parentIterator.isAtEnd() || (leafIterator == parentIterator->begin() && !moved))
+				{					
+					--parentIterator;
+					leafIterator = parentIterator->end();
+					if (leafIterator != parentIterator->begin())
+					{
+						--leafIterator;
+						moved = true;
+					}
+				}
+				if (!moved)
+					--leafIterator;
+				return *this;
+			}
+
 			bool operator==(const FlatteningIterator<Iterator, FlatteningLevels>& other) const
 			{
 				if (isAtEnd())
@@ -64,23 +87,27 @@ namespace nse
 					&& leafIterator == other.leafIterator;
 			}
 			bool operator!=(const FlatteningIterator& other) const { return !(*this == other); }
-			reference operator*() const { return *leafIterator; }
-			pointer operator->() const { return &(*leafIterator); }
+			decltype(*leafIterator) operator*() const { return *leafIterator; }
+			decltype(&(*leafIterator)) operator->() const { return &(*leafIterator); }
 
 			bool isAtEnd() const { return parentIterator.isAtEnd(); }
 
-		private:
-
-			typename ParentFlattening::value_type::iterator leafIterator;
-			ParentFlattening parentIterator;
+			typedef typename std::conditional<IsBidirectional, std::bidirectional_iterator_tag, std::forward_iterator_tag>::type iterator_category;
+			typedef typename std::iterator_traits<typename ParentFlattening::value_type::iterator>::value_type value_type;
+			typedef size_t difference_type;
+			typedef decltype(&(*leafIterator)) pointer;
+			typedef decltype(*leafIterator) reference;
 		};
 
 		// Base iterator for the top level of a hierarchy flattening
 		template <typename Iterator>
 		class FlatteningIterator<Iterator, 0>
 		{
+			static const bool IsBidirectional =
+				std::is_base_of<std::bidirectional_iterator_tag, typename std::iterator_traits<Iterator>::iterator_category>::value;
+
 		public:
-			typedef std::forward_iterator_tag iterator_category;
+			typedef typename std::conditional<IsBidirectional, std::bidirectional_iterator_tag, std::forward_iterator_tag>::type iterator_category;
 			typedef typename std::iterator_traits<Iterator>::value_type value_type;
 			typedef size_t difference_type;
 			typedef typename std::iterator_traits<Iterator>::pointer pointer;
@@ -97,6 +124,13 @@ namespace nse
 				return *this;
 			}
 
+			template <typename IIterator = Iterator>
+			typename std::enable_if<FlatteningIterator<IIterator, 0>::IsBidirectional, FlatteningIterator&>::type operator--()
+			{
+				--current;
+				return *this;
+			}
+
 			bool operator==(const FlatteningIterator& other) const { return current == other.current; }
 			bool operator!=(const FlatteningIterator& other) const { return !(*this == other); }
 			reference operator*() const { return *current; }
@@ -106,14 +140,14 @@ namespace nse
 
 		private:
 			Iterator current, end;
-		};
+		};		
 
 		// Returns a range object that sequentially iterate elements on a given level of a
 		// container hierarchy, e.g. a std::vector<std::vector<int>>.
 		// begin: the begin iterator of the top-level container
 		// end: the end iterator of the top-level container
 		template <int FlatteningLevels = 1, typename Iterator>
-		IteratorRange<FlatteningIterator<Iterator, FlatteningLevels>> FlattenHierarchy(Iterator begin, Iterator end)
+		auto FlattenHierarchy(Iterator begin, Iterator end)
 		{
 			FlatteningIterator<Iterator, FlatteningLevels> flattenedBegin(begin, end);
 			FlatteningIterator<Iterator, FlatteningLevels> flattenedEnd(end, end);

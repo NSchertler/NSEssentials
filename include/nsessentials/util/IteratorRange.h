@@ -22,6 +22,9 @@ namespace nse
 
 			typedef Iterator iterator;
 
+			IteratorRange()
+			{ }
+
 			IteratorRange(Iterator begin, Iterator end)
 				: _begin(begin), _end(end)
 			{ }
