@@ -106,16 +106,19 @@ bool AbstractViewer::resizeEvent(const Eigen::Vector2i & s)
 
 float AbstractViewer::get3DPosition(const Eigen::Vector2i & screenPos, Eigen::Vector4f & pos) const
 {
+	GLint viewport[4];
+	glGetIntegerv(GL_VIEWPORT, viewport);
+
 	float depth;
 	glReadPixels(screenPos.x() * mPixelRatio, (height() - 1 - screenPos.y()) * mPixelRatio, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
 
 	float ndcDepth = 2 * (depth - 0.5f);
 
-	float x = 2 * ((float)screenPos.x() / width() - 0.5f);
-	float y = 2 * ((float)-screenPos.y() / height() + 0.5f);
+	float x = 2 * ((float)(screenPos.x()            - viewport[0]) / viewport[2] - 0.5f);
+	float y = 2 * ((float)(height() - screenPos.y() - viewport[1]) / viewport[3] - 0.5f);
 
 	Eigen::Matrix4f view, proj;
-	camera().ComputeCameraMatrices(view, proj);
+	camera().ComputeCameraMatrices(view, proj, (float)viewport[2] / viewport[3]);
 
 	Eigen::Matrix4f mvp = proj * view;
 	Eigen::Matrix4f invMvp = mvp.inverse();
