@@ -32,6 +32,41 @@ bool AbstractViewer::keyboardEvent(int key, int scancode, int action, int mods)
 	if (key == GLFW_KEY_LEFT_SHIFT && action == 1)
 		_shiftDown = true;
 
+	if (key == GLFW_KEY_C && action == GLFW_PRESS && mods & GLFW_MOD_CONTROL)
+	{
+		//write camera parameters to clipboard
+		auto params = camera().saveParams();
+		std::stringstream ss;
+		auto& rot = params.arcball.state();
+		ss << rot.x() << " " << rot.y() << " " << rot.z() << " " << rot.w() << " "
+			<< params.focusPoint.transpose() << " " << params.fovy << " " << params.sceneCenter.transpose() << " "
+			<< params.sceneRadius << " " << params.viewDistance;
+		glfwSetClipboardString(this->glfwWindow(), ss.str().c_str());
+		return true;
+	}
+	if (key == GLFW_KEY_V && action == GLFW_PRESS && mods & GLFW_MOD_CONTROL)
+	{
+		//restore camera parameters from clipboard
+		float rx, ry, rz, rw;
+		Camera::CamParams p = camera().saveParams();		
+		p.viewDistance = -1;
+		auto str = glfwGetClipboardString(glfwWindow());
+		if (str == nullptr)
+			return true;
+		std::stringstream ss(str);
+		ss >> rx >> ry >> rz >> rw 
+			>> p.focusPoint.x() >> p.focusPoint.y() >> p.focusPoint.z()
+			>> p.fovy >> p.sceneCenter.x() >> p.sceneCenter.y() >> p.sceneCenter.z()
+			>> p.sceneRadius >> p.viewDistance;
+		if (p.viewDistance == -1)
+			return true;
+		
+		p.arcball.setState(Eigen::Quaternionf(rw, rx, ry, rz));
+		camera().restoreParams(p);
+
+		return true;
+	}
+
 	return true;
 }
 
