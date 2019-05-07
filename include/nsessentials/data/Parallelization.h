@@ -15,6 +15,7 @@
 #include <mutex>
 #include <vector>
 #include <random>
+#include <atomic>
 
 #ifdef HAVE_TBB
 #include <tbb/tbb.h>
@@ -74,6 +75,23 @@ namespace nse {
 				newVal.f = oldVal.f + delta;
 			} while (!atomicCompareAndExchange((volatile uint32_t *)dst, newVal.i[0], oldVal.i[0]) || !atomicCompareAndExchange((volatile uint32_t *)dst, newVal.i[1], oldVal.i[1]));
 			return newVal.f;
+		}
+
+		//Code adapted from https://stackoverflow.com/a/16190791/1210053
+		template <typename T>
+		inline void atomicUpdateMax(std::atomic<T>& maxValue, const T& maxCandidate)
+		{
+			T prevMax = maxValue;
+			while (prevMax < maxCandidate && !maxValue.compare_exchange_weak(prevMax, maxCandidate))
+				;
+		}
+
+		template <typename T>
+		inline void atomicUpdateMin(std::atomic<T>& minValue, const T& minCandidate)
+		{
+			T prevMin = minValue;
+			while (prevMin > minCandidate && !minValue.compare_exchange_weak(prevMin, minCandidate))
+				;
 		}
 
 		class ordered_lock

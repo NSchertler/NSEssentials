@@ -34,7 +34,7 @@ void solveMixedIntegerGreedyRounding(
 
 	auto enqueueNonZeros = [&](int variableIdx, std::queue<int>& queue)
 	{
-		for (Eigen::SparseMatrix<Scalar>::InnerIterator it(energy.A(), variableIdx); it; ++it)
+		for (typename Eigen::SparseMatrix<Scalar>::InnerIterator it(energy.A(), variableIdx); it; ++it)
 		{
 			if (it.index() != variableIdx && it.value() != 0 && !energy.isVariableFixed(it.index()))
 				queue.push(it.index());
@@ -85,7 +85,7 @@ void solveMixedIntegerGreedyRounding(
 
 				//update residual
 				Scalar residual = energy.b()(var);
-				for (Eigen::SparseMatrix<Scalar>::InnerIterator it(energy.A(), var); it; ++it)
+				for (typename Eigen::SparseMatrix<Scalar>::InnerIterator it(energy.A(), var); it; ++it)
 					residual -= it.value() * solution(it.index());
 
 				//check if we need to update this variable

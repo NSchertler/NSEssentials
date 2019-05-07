@@ -51,11 +51,11 @@ int IndentationLog::overflow(int ch)
 			blocks.back().hasContent = true;
 		}
 	}
-	if (isAtStartOfLine && ch != '\n')
+	if (isAtStartOfLine && ch != '\n' && ch != '\r')
 	{
 		for (int i = 0; i < blocks.size(); ++i)
 			dest->sputn(indent.data(), indent.size());
 	}
-	isAtStartOfLine = ch == '\n';
+	isAtStartOfLine = ch == '\n' || ch == '\r';
 	return dest->sputc(ch);
 }

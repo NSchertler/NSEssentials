@@ -108,13 +108,6 @@ namespace nse {
 				_A.reserve(reserveSizes);
 			}
 
-			//Reserves the specified number of entries per row in the sparse matrix.
-			template<class SizesType>
-			void reserve(const SizesType& reserveSizes, const typename SizesType::Scalar& enableif = typename SizesType::Scalar())
-			{
-				_A.reserve(reserveSizes);
-			}
-
 			// Calculates a specific subenergy for a given argument x.
 			//   iSubEnergy: the index of the subenergy to calculate, must be in [0, SubEnergies)
 			Scalar energy(int iSubEnergy, const Eigen::Matrix<Scalar, -1, 1>& x) const
@@ -174,7 +167,7 @@ namespace nse {
 			{
 				_A.uncompress();
 				//Extract the variable from the quadratic part
-				for (MatrixType::InnerIterator it(_A, idx); it; ++it)
+				for (typename MatrixType::InnerIterator it(_A, idx); it; ++it)
 				{
 					if (it.index() == idx)
 					{

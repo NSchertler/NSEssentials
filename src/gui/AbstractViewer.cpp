@@ -67,7 +67,7 @@ bool AbstractViewer::keyboardEvent(int key, int scancode, int action, int mods)
 		return true;
 	}
 
-	return true;
+	return Screen::keyboardEvent(key, scancode, action, mods);
 }
 
 bool AbstractViewer::scrollEvent(const Eigen::Vector2i &p, const Eigen::Vector2f &rel)
@@ -84,7 +84,7 @@ bool AbstractViewer::scrollEvent(const Eigen::Vector2i &p, const Eigen::Vector2f
 		return true;
 	}
 
-	return false;
+	return Screen::scrollEvent(p, rel);
 }
 
 bool AbstractViewer::mouseButtonEvent(const Eigen::Vector2i &p, int button, bool down, int modifiers)
