@@ -110,6 +110,7 @@ namespace nse {
 		{
 			size_t n;
 			loadFromFile(n, f);
+			object.clear();
 			for (size_t i = 0; i < n; ++i)
 			{
 				object.emplace_back();

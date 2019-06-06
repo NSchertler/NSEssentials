@@ -73,6 +73,7 @@ add_library(nsessentials ${NSE_BUILD_TYPE}
 			src/math/Morton.cpp  include/nsessentials/math/Morton.h
 			include/nsessentials/math/ParallelCG.h
 			include/nsessentials/math/QuadraticEnergy.h
+			include/nsessentials/math/FastTrigonometry.h
 
 			src/util/GLDebug.cpp  include/nsessentials/util/GLDebug.h
 			src/util/IndentationLog.cpp  include/nsessentials/util/IndentationLog.h

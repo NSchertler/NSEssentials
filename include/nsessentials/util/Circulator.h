@@ -21,8 +21,11 @@ namespace nse
 		template <typename Iterator>
 		class Circulator
 		{
-		public:
-			typedef std::forward_iterator_tag iterator_category;
+			static const bool IsBidirectional =
+				std::is_base_of<std::bidirectional_iterator_tag, typename std::iterator_traits<Iterator>::iterator_category>::value;
+
+		public:			
+			typedef typename std::conditional<IsBidirectional, std::bidirectional_iterator_tag, std::forward_iterator_tag>::type iterator_category;
 			typedef typename std::iterator_traits<Iterator>::value_type value_type;
 			typedef size_t difference_type;
 			typedef typename std::iterator_traits<Iterator>::pointer pointer;
@@ -36,10 +39,20 @@ namespace nse
 			}
 
 			Circulator& operator++() { ++current; if (current == end) current = begin; return *this; }
+
+			template <typename IIterator = Iterator>
+			typename std::enable_if<Circulator<IIterator>::IsBidirectional, Circulator&>::type operator--()
+			{
+				if (current == begin)
+					current = end;
+				--current;
+				return *this;
+			}
+
 			bool operator==(const Circulator& other) const { return other.current == current; }
 			bool operator!=(const Circulator& other) const { return !(*this == other); }
-			value_type operator*() const { return *current; }
-
+			auto operator*() const { return *current; }
+			auto operator->() const { return current.operator->(); }
 		protected:
 			Iterator current, begin, end;
 		};		
