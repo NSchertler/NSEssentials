@@ -27,9 +27,11 @@ namespace nse
 		public:			
 			typedef typename std::conditional<IsBidirectional, std::bidirectional_iterator_tag, std::forward_iterator_tag>::type iterator_category;
 			typedef typename std::iterator_traits<Iterator>::value_type value_type;
-			typedef size_t difference_type;
+			typedef typename std::iterator_traits<Iterator>::difference_type difference_type;
 			typedef typename std::iterator_traits<Iterator>::pointer pointer;
 			typedef typename std::iterator_traits<Iterator>::reference reference;			
+
+			Circulator() { }
 
 			Circulator(Iterator current, Iterator sequenceBegin, Iterator sequenceEnd)
 				: current(current), begin(sequenceBegin), end(sequenceEnd)
